@@ -1,22 +1,45 @@
-﻿@{
+﻿@using BookShop.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<BookShopUser> SignInManager
+@inject UserManager<BookShopUser> UserManager
+
+@model Store
+@{
 	ViewData["Title"] = "Register Store";
 }
 
 <div class="text-center">
 	<h1 class="display-4">Register Seller</h1>
 </div>
-<div class="container w-50">
-	<div class="mb-3 g-3">
-		<label for="exampleFormControlInput1" class="form-label">UserID:</label>
-		<input type="text" class="form-control" id="exampleFormControlInput1">
+
+@if (SignInManager.IsSignedIn(User))
+{
+	<form asp-action="addStore" method="post">
+		<div class="container w-50">
+			<div class="mb-3 g-3">
+				<label for="exampleFormControlInput1" class="form-label" asp-for="UserId">UserID:</label>
+				<input type="text" class="form-control" id="exampleFormControlInput1" value="@UserManager.GetUserId(User)" asp-for="UserId" readonly>
+			</div>
+			<div class="mb-3 g-3">
+				<label for="exampleFormControlInput1" class="form-label">Store address:</label>
+				<input type="text" class="form-control" id="exampleFormControlInput1" asp-for="Address">
+			</div>
+			<div class="mb-3 g-3">
+				<label for="exampleFormControlInput1" class="form-label">Owner:</label>
+				<input type="text" class="form-control" id="exampleFormControlInput1" asp-for="Name">
+			</div>
+			<div class="mb-3 g-3">
+				<label for="exampleFormControlTextarea1" class="form-label">Store name:</label>
+				<input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Example: BookTiki" asp-for="Slogan">
+			</div>
+			<button asp-route-ownerId = "@UserManager.GetUserId(User)" type="submit" class="btn btn-primary">Submit</button>
+		</div>
+	</form>
+}
+else
+{
+	<div class="text-center">
+		<p class="mt-4 text-danger">Must register as a customer before becoming a shop owner</p>
 	</div>
-	<div class="mb-3 g-3">
-		<label for="exampleFormControlInput1" class="form-label">Store address:</label>
-		<input type="text" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-	</div>
-	<div class="mb-3 g-3">
-		<label for="exampleFormControlTextarea1" class="form-label">Store name:</label>
-		<input type="text" class="form-control" id="exampleFormControlInput1" placeholder="BookTiki">
-	</div>
-	<button type="submit" class="btn btn-primary">Submit</button>
-</div>
+}

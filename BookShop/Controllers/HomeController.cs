@@ -1,4 +1,5 @@
-﻿using BookShop.Models;
+﻿using BookShop.Areas.Identity.Data;
+using BookShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -15,11 +16,13 @@ namespace BookShop.Controllers
 
         public IActionResult Index()
         {
+            HttpContext.Session.SetString("Test", "Session value");
             return View();
         }
 
         public IActionResult Privacy()
         {
+            ViewBag.sessionV = HttpContext.Session.GetString("Test");
             return View();
         }
 

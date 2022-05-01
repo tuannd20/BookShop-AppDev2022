@@ -4,3 +4,22 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>Use this page to detail your site's privacy policy.</p>
+<p>
+    @ViewBag.sessionV
+</p>
+
+@section Footer
+{
+<div class="d-flex justify-content-between" style="align-items: center">
+	<div>
+		&copy; 2022 - Tuan&Nhan - <a asp-area="" asp-controller="Home" asp-action="Privacy">Application</a>
+	</div>
+	<div>
+		<ul class="navbar-nav align-middle">
+			<li class="nav-item btn btn-primary">
+				<a class="nav-link text-light fw-bold " asp-area="" asp-controller="Store" asp-action="Register">Become a seller with us</a>
+			</li>
+		</ul>
+	</div>
+</div>
+}

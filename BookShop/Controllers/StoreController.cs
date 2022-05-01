@@ -1,4 +1,5 @@
-﻿using BookShop.Models;
+﻿using BookShop.Data;
+using BookShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,21 +7,33 @@ namespace BookShop.Controllers
 {
     public class StoreController : Controller
     {
-        private readonly ILogger<StoreController> _logger;
+        private readonly BookShopContext _db;
 
-        public StoreController(ILogger<StoreController> logger)
+        public StoreController(BookShopContext db)
         {
-            _logger = logger;
+            _db = db;
         }
 
         public IActionResult Index()
         {
-            return View();
+			
+			IEnumerable<Store> objStore = _db.Store.ToList();
+			Console.WriteLine("Store:", objStore);
+			return View("Views/Store/Index.cshtml", objStore);
         }
 
         public IActionResult Register()
         {
             return View("Views/Store/Register.cshtml");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult addStore([Bind("UserId, Address, Slogan, Name")] Store store)
+        {
+            _db.Store.Add(store);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }
