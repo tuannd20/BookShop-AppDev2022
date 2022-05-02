@@ -1,5 +1,9 @@
-﻿using BookShop.Data;
+﻿using BookShop.Areas.Identity.Data;
+using BookShop.Data;
 using BookShop.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -12,6 +16,11 @@ namespace BookShop.Controllers
         */
         private BookShopContext _context;
 
+        private readonly ILogger<HomeController> _logger;
+        private readonly IEmailSender _emailSender;
+        private readonly UserManager<BookShopUser> _userManager;
+
+
         private readonly int maxofpage = 10;
 
         private readonly int rowsonepage = 4;
@@ -20,9 +29,12 @@ namespace BookShop.Controllers
          {
              _logger = logger;
          }*/
-        public HomeController(BookShopContext context)
+        public HomeController(BookShopContext context, ILogger<HomeController> logger, IEmailSender emailSender, UserManager<BookShopUser> userManager)
         {
             _context = context;
+            _logger = logger;
+            _emailSender = emailSender;
+            _userManager = userManager;
         }
         public async Task<IActionResult> Index(int id = 0, string searchString = "")
         {
@@ -50,6 +62,16 @@ namespace BookShop.Controllers
             /*            var books = await _context.Books.ToListAsync();
             */
         }
+
+        [Authorize(Roles = "Seller")]
+        public IActionResult ForSellerOnly()
+        {
+
+            /* ViewBag.message = "This is for Customer only! Hi " + _userManager.GetUserName(HttpContext.User);*/
+            return View("Views/Store/Index.cshtml");
+        }
+
+
         public IActionResult Privacy()
         {
             return View();

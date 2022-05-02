@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BookShop.Areas.Identity.Pages.Account
 {
@@ -30,6 +31,13 @@ namespace BookShop.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<BookShopUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+
+        public List<SelectListItem> Roles { get; } = new List<SelectListItem>
+        {
+          new SelectListItem { Value = "Customer", Text = "Customer" },
+          new SelectListItem { Value = "Seller", Text = "Store Owner" }
+        };
+
 
         public RegisterModel(
             UserManager<BookShopUser> userManager,
@@ -98,6 +106,10 @@ namespace BookShop.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            [Required]
+            [Display(Name = "Your Role")]
+            public string Role { get; set; }
+
         }
 
 
@@ -122,6 +134,7 @@ namespace BookShop.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    await _userManager.AddToRoleAsync(user, Input.Role);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
