@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace BookShop.Models
@@ -14,7 +15,12 @@ namespace BookShop.Models
         public double Price { get; set; }
         public string Desc { get; set; }
         public string ImgUrl { get; set; }
+        [ValidateNever]
+
         public Store Store { get; set; }
         public virtual ICollection<OrderDetail>? OrderDetails { get; set; }
+
+        public virtual ICollection<Cart>? Carts { get; set; }
+
     }
 }

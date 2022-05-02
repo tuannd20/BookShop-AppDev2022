@@ -131,7 +131,25 @@ namespace BookShop.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Book");
+                    b.ToTable("Book", (string)null);
+                });
+
+            modelBuilder.Entity("BookShop.Models.Cart", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BookIsbn")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "BookIsbn");
+
+                    b.HasIndex("BookIsbn");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Cart", (string)null);
                 });
 
             modelBuilder.Entity("BookShop.Models.Order", b =>
@@ -156,7 +174,7 @@ namespace BookShop.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Order", (string)null);
                 });
 
             modelBuilder.Entity("BookShop.Models.OrderDetail", b =>
@@ -174,7 +192,7 @@ namespace BookShop.Migrations
 
                     b.HasIndex("BookIsbn");
 
-                    b.ToTable("OrderDetail");
+                    b.ToTable("OrderDetail", (string)null);
                 });
 
             modelBuilder.Entity("BookShop.Models.Store", b =>
@@ -206,7 +224,7 @@ namespace BookShop.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Store");
+                    b.ToTable("Store", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -357,6 +375,25 @@ namespace BookShop.Migrations
                     b.Navigation("Store");
                 });
 
+            modelBuilder.Entity("BookShop.Models.Cart", b =>
+                {
+                    b.HasOne("BookShop.Models.Book", "Book")
+                        .WithMany("Carts")
+                        .HasForeignKey("BookIsbn")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookShop.Areas.Identity.Data.BookShopUser", "User")
+                        .WithOne("Carts")
+                        .HasForeignKey("BookShop.Models.Cart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BookShop.Models.Order", b =>
                 {
                     b.HasOne("BookShop.Areas.Identity.Data.BookShopUser", "User")
@@ -379,7 +416,7 @@ namespace BookShop.Migrations
                     b.HasOne("BookShop.Models.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Book");
@@ -451,6 +488,8 @@ namespace BookShop.Migrations
 
             modelBuilder.Entity("BookShop.Areas.Identity.Data.BookShopUser", b =>
                 {
+                    b.Navigation("Carts");
+
                     b.Navigation("Orders");
 
                     b.Navigation("Store");
@@ -458,6 +497,8 @@ namespace BookShop.Migrations
 
             modelBuilder.Entity("BookShop.Models.Book", b =>
                 {
+                    b.Navigation("Carts");
+
                     b.Navigation("OrderDetails");
                 });
 
