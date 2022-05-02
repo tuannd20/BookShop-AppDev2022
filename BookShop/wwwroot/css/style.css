@@ -772,7 +772,7 @@ section {
 
 .product-items {
     position: relative;
-    width: 900px;
+    width: 750px;
     height: 450px;
     margin: 0 auto;
     background-color: #fff;
@@ -781,7 +781,8 @@ section {
 }
 
 .product-content {
-    margin: 50px;
+    display: flex;
+    margin: 20px;
     font-size: 20px;
 }
 
@@ -815,18 +816,13 @@ section {
     font-size: 25px;
 }
 
-.product-img {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 10px;
-}
-
 .product-items img {
     height: 40rem;
-    margin: auto;
+    margin-right: 14px;
 }
-
+.product-content-item{
+    margin:20px;
+}
 .input-group1 {
     display: inline-block;
     padding: 0;

@@ -14,7 +14,7 @@ namespace BookShop.Models
         public string Category { get; set; }
         public double Price { get; set; }
         public string Desc { get; set; }
-        public string ImgUrl { get; set; }
+        public string? ImgUrl { get; set; }
         [ValidateNever]
 
         public Store Store { get; set; }

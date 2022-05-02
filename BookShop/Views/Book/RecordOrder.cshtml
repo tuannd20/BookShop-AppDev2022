@@ -1,0 +1,26 @@
+﻿@model IEnumerable<BookShop.Models.OrderDetail>
+
+@{
+    ViewData["Title"] = "RecordOrder";
+}
+
+<h1>RecordOrder</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">User</th>
+      <th scope="col">Order Date</th>
+      <th scope="col">Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1</th>
+      <td>Mark</td>
+      <td>Otto</td>
+      <td> <a asp-action="Details" asp-route-id=" ">Details</a> </td>
+    </tr>
+
+  </tbody>
+</table>
