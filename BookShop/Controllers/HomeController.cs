@@ -54,20 +54,20 @@ namespace BookShop.Controllers
         {
             return View();
         }
-        /*        public async Task<IActionResult> AddToCart(string isbn)
-                {
-                    string thisUserId = _userManager.GetUserId(HttpContext.User);
-                    Cart myCart = new Cart() { UId = thisUserId, BookIsbn = isbn };
-                    Cart fromDb = _context.Cart.FirstOrDefault(c => c.UId == thisUserId && c.BookIsbn == isbn);
-                    //if not existing (or null), add it to cart. If already added to Cart before, ignore it.
-                    if (fromDb == null)
-                    {
-                        _context.Add(myCart);
-                        await _context.SaveChangesAsync();
-                    }
-                    return RedirectToAction("List");
-                }
-        */
+/*        public async Task<IActionResult> AddToCart(string isbn)
+        {
+            string thisUserId = _userManager.GetUserId(HttpContext.User);
+            Cart myCart = new Cart() { UId = thisUserId, BookIsbn = isbn };
+            Cart fromDb = _context.Cart.FirstOrDefault(c => c.UId == thisUserId && c.BookIsbn == isbn);
+            //if not existing (or null), add it to cart. If already added to Cart before, ignore it.
+            if (fromDb == null)
+            {
+                _context.Add(myCart);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("List");
+        }
+*/
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

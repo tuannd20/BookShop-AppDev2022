@@ -16,17 +16,39 @@ namespace BookShop.Controllers
     {
         private readonly BookShopContext _context;
 
+        private readonly int maxofpage = 10;
+
+        private readonly int rowsonepage = 4;
+
+
         public BookController(BookShopContext context)
         {
             _context = context;
         }
 
         // GET: Book
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int id = 0, string searchString = "")
         {
-            var BookShop = _context.Books.Include(b => b.Store);
-            return View(await BookShop.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+            var students = from s in _context.Books
+                           select s;
+            students = students.Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
+            /*            students = students.Where(s => s.LastName);
+            */
+            int numOfFilteredStudent = students.Count();
+            ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredStudent / rowsonepage);
+            ViewBag.CurrentPage = id;
+            List<Book> studentsList = await students.Skip(id * rowsonepage)
+                .Take(rowsonepage).ToListAsync();
+            if (id > 0)
+            {
+                ViewBag.idpagprev = id - 1;
+            }
+            ViewBag.idpagenext = id + 1;
+            ViewBag.currentPage = id;
+            return View(studentsList);
         }
+
 
         // GET: Book/Details/5
         public async Task<IActionResult> Details(string id)
@@ -52,6 +74,11 @@ namespace BookShop.Controllers
         {
            
             ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Id");
+            return View();
+        }   
+        public async Task<IActionResult> RecordOrder()
+        {
+          
             return View();
         }
 

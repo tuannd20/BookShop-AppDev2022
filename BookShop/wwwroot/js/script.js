@@ -136,18 +136,19 @@ const shoppingCart = document.querySelector('.shopping-cart');
 const shoppingCartBtn = document.querySelector('.btn-cart');
 const productItems = document.querySelector('.product-content-item');
 const productImg = document.querySelector('.product-img');
-const productSubmit = document.querySelector('.product-submit');
 let productdetails = document.querySelectorAll(".fa-eye");
-let productdetail1 = document.querySelectorAll(".swiper-slide-arrivals ");
+let productdetail1 = document.querySelectorAll(".swiper-slide-arrivals");
 let openproductdetails = document.querySelector('.product-detail');
 let closeproductdetails = document.querySelector(".close-detail-btn");
-let carts = document.querySelector('.fa-shopping-cart');
+let carts = document.querySelector('.fa-shopping-cart');  
 let openpcarts = document.querySelector('.shop-cart');
 let closecarts = document.querySelector('.close-cart-btn');
 let cartItems = document.querySelector('.cart-item');
 let totalbill = document.querySelector('.total-bill');
 
 productdetails.forEach(item => item.addEventListener("click", viewproductdetail));
+productdetail1.forEach(item => item.addEventListener("click", viewproductdetail));
+
 function viewproductdetail( ) {
     let listDetailItems = [];
     productItems.innerHTML = '';
@@ -174,16 +175,12 @@ function viewproductdetail( ) {
                 <p class="product product-category" data-category="${item.category}" data-id="123"> <span class = "title-bold">Category: </span> ${item.category} </p>
                 <p class = "product product-description"> <span class = "title-bold">Description:</span> ${item.description} </p>
                 <p class="product product-price">  ${item.price} </p>
+                <a asp-action="AddToCart" asp-route-isbn="${item.isbn}" class="btn1 btn-cart" >Add to cart</a>
             `;
         let productDetailItemImg =  `
-                <div class="product-img">
-                <img src="~/img/${item.url}" alt="">
-                </div>                
+                <img src="/img/${item.url}" alt="">               
             `;
-        let productSubmitDetailItem =  `
-        <a asp-action="AddToCart" asp-route-isbn="${item.isbn}" class="btn1 btn-cart" >Add to cart</a>
-            `;
-        productSubmit.insertAdjacentHTML("afterbegin", productSubmitDetailItem);
+    
         productItems.insertAdjacentHTML("afterbegin", productDetailItem);
         productImg.insertAdjacentHTML("afterbegin", productDetailItemImg);
 
@@ -192,37 +189,6 @@ function viewproductdetail( ) {
 
 }
 
-productdetail1.forEach(item => item.addEventListener("click", viewproductdetail));
-function viewproductdetail() {
-    let listDetailItems = [];
-    productItems.innerHTML = '';
-    openproductdetails.classList.add("open");
-
-    const currentDetailBtn = event.target;
-    const title = currentDetailBtn.dataset.title;
-    console.log("title", title);
-    const price = currentDetailBtn.dataset.price;
-    console.log("title", price);
-    const description = currentDetailBtn.dataset.description;
-    console.log("description", description);
-    const category = currentDetailBtn.dataset.category;
-    console.log("category", event.target);
-    let item = { title, price, description, category };
-    listDetailItems.push(item);
-
-    listDetailItems.forEach(item => {
-        let productDetailItem = `
-                <p class = "product product-title">${item.title}</p>
-                <p class="product product-category" data-category="${item.category}" data-id="123"> <span class = "title-bold">Category: </span> ${item.category} </p>
-                <p class = "product product-description"> <span class = "title-bold">Description:</span> ${item.description} </p>
-                <p class="product product-price">  ${item.price} </p>
-            `;
-        productItems.insertAdjacentHTML("afterbegin", productDetailItem);
-
-    })
-    listDetailItems.unshift(item);
-
-}
 
 
 /*shoppingCartBtn.addEventListener("click", function addToCart(event) {
