@@ -10,73 +10,9 @@
 @{
 	ViewData["Title"] = "Users Page";
 	Layout = "~/Views/Shared/_LayoutUser.cshtml";
-
 }
 
 <!-- header section starts  -->
-
-<header class="header">
-
-	<div class="header-1">
-		<a href="#" class="logo"> <i class="fas fa-book"></i> bookly </a>
-
-		<form asp-action="Index" method="get" class="search-form">
-			<input type="search" name="SearchString" value="@ViewData["CurrentFilter"]" placeholder="Search here..." id="search-box">
-			<input type="submit" value="Search" class="submit-search">
-		</form>
-
-		<div class="icons">
-			<div id="search-btn" class="fas fa-search"></div>
-			<a href="#" class="fas fa-heart"></a>
-			<div class="fas fa-shopping-cart"></div>
-			@if (SignInManager.IsSignedIn(User))
-			{
-				<div class="login-dropdow">
-					<a class="fas fa-user"></a>
-					<div class="login-dropdow-content">
-						<a class="login-dropdow-content-title" asp-area="Identity" asp-page="/Account/Manage/Index">@UserManager.GetUserName(User)!</a>
-						@*<a class="login-dropdow-content-title" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Logout</a>*@
-						<div class="aligns-items-center justify-content-center">
-							<form class="login-dropdow-content-title aligns-items-center justify-content-center" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-								<input type="submit" class="login-dropdow-content-title text-center" value="Logout"/>
-							</form>
-						</div>
-					</div>
-				</div>
-			}
-			else
-			{
-				<div class="login-dropdow">
-					<a class="fas fa-user"></a>
-					<div class="login-dropdow-content">
-						<a class="login-dropdow-content-title" asp-area="Identity" asp-page="/Account/Register">Register</a>
-						<a class="login-dropdow-content-title" asp-area="Identity" asp-page="/Account/Login">Login</a>
-					</div>
-				</div>
-			}
-		</div>
-
-	</div>
-
-	<div class="header-2">
-		<nav class="navbar-1">
-			<a href="#home">home</a>
-			<a href="#featured">featured</a>
-			<a href="#arrivals">arrivals</a>
-			<a href="#reviews">reviews</a>
-			<a href="#blogs">helps</a>
-			@if (SignInManager.IsSignedIn(User))
-			{
-				<a asp-area="" asp-controller="Store" asp-action="ForSellerOnly">Store</a>
-			}
-			else
-			{
-				<a class="d-none" asp-area="" asp-controller="Home" asp-action="ForSellerOnly">Store</a>
-			}
-		</nav>
-	</div>
-
-</header>
 
 <!-- header section ends -->
 <!-- bottom navbar  -->
@@ -461,61 +397,6 @@
 <!-- blogs section ends -->
 <!-- footer section starts  -->
 
-<section class="footer">
-
-	<div class="box-container">
-
-		<div class="box">
-			<h3>our locations</h3>
-			<a href="#"> <i class="fas fa-map-marker-alt"></i> india </a>
-			<a href="#"> <i class="fas fa-map-marker-alt"></i> USA </a>
-			<a href="#"> <i class="fas fa-map-marker-alt"></i> russia </a>
-			<a href="#"> <i class="fas fa-map-marker-alt"></i> france </a>
-			<a href="#"> <i class="fas fa-map-marker-alt"></i> japan </a>
-			<a href="#"> <i class="fas fa-map-marker-alt"></i> africa </a>
-		</div>
-
-		<div class="box">
-			<h3>quick links</h3>
-			<a href="#"> <i class="fas fa-arrow-right"></i> home </a>
-			<a href="#"> <i class="fas fa-arrow-right"></i> featured </a>
-			<a href="#"> <i class="fas fa-arrow-right"></i> arrivals </a>
-			<a href="#"> <i class="fas fa-arrow-right"></i> reviews </a>
-			<a href="#"> <i class="fas fa-arrow-right"></i> blogs </a>
-		</div>
-
-		<div class="box">
-			<h3>extra links</h3>
-			<a href="#"> <i class="fas fa-arrow-right"></i> account info </a>
-			<a href="#"> <i class="fas fa-arrow-right"></i> ordered items </a>
-			<a href="#"> <i class="fas fa-arrow-right"></i> privacy policy </a>
-			<a href="#"> <i class="fas fa-arrow-right"></i> payment method </a>
-			<a href="#"> <i class="fas fa-arrow-right"></i> our serivces </a>
-		</div>
-
-		<div class="box">
-			<h3>contact info</h3>
-			<a href="#"> <i class="fas fa-phone"></i> +123-456-7890 </a>
-			<a href="#"> <i class="fas fa-phone"></i> +111-222-3333 </a>
-			<a class="fw-bold" asp-area="" asp-controller="Store" asp-action="Register"> <i class="fas fa-envelope"></i>Become a seller with us</a>
-			<img src="~/image/worldmap.png" class="map" alt="">
-		</div>
-
-	</div>
-
-	<div class="share">
-		<a href="#" class="fab fa-facebook-f"></a>
-		<a href="#" class="fab fa-twitter"></a>
-		<a href="#" class="fab fa-instagram"></a>
-		<a href="#" class="fab fa-linkedin"></a>
-		<a href="#" class="fab fa-pinterest"></a>
-	</div>
-
-	<div class="credit"> created by <span>nhan</span> | all rights reserved! </div>
-
-</section>
-
-
 <div class="product-detail">
 	<div class="product-items">
 		<div class="product-img">
@@ -532,79 +413,4 @@
 	</div>
 
 </div>
-
-<div class="shop-cart">
-	<div class="main-cart">
-		<main id="cart" style="max-width:960px">
-			<h1>Your Cart</h1>
-			<div class="container-fluid">
-				<div class="row align-items-start">
-					<div class="col-12 col-sm-8 items cart-item">
-						<!--1-->
-						<div class="cartItem row align-items-start">
-							<div class="col-3 mb-2">
-								<img class="w-100" src="~/image/book-1.png" alt="art image">
-							</div>
-
-							<div class="col-2 mb-2">
-
-								<p class="pl-1 mb-0">conan</p>
-								<h6 class="">Comic</h6>
-							</div>
-							<div class="col-4">
-								<div class="product-quantity">
-									<label class="title-bold">Quantity: </label>
-									<div class="input-group1">
-										<button id="down" class=" btn-input btn-input-down" onclick=" down('0')"><ion-icon name="remove-outline"></ion-icon></button>
-										<input type="text" id="myNumber" class=" input-number" value="1" />
-										<button id="up" class=" btn-input" onclick="up('100')"><ion-icon name="add-outline"></ion-icon></button>
-									</div>
-								</div>
-							</div>
-							<div class="col-2 mb-2">
-								<p id="cartItem1Price">$ 21</p>
-							</div>
-							<div class="col-1 mb-2 delete_item">
-								<p class=""><ion-icon name="trash-outline"></ion-icon></p>
-							</div>
-						</div>
-
-						<hr>
-					</div>
-					<div class="col-12 col-sm-4 p-3 proceed form total-bill">
-						<div class="row m-0">
-							<div class="col-sm-8 p-2">
-								<h6>Subtotal</h6>
-							</div>
-							<div class="col-sm-4 p-2">
-								<p id="subtotal">$ 11</p>
-							</div>
-						</div>
-						<div class="row m-0">
-							<div class="col-sm-8 p-2 ">
-								<h6>Tax</h6>
-							</div>
-							<div class="col-sm-4 p-2">
-								<p id="tax">$ 11</p>
-							</div>
-						</div>
-						<hr>
-						<div class="row mx-0 mb-2">
-							<div class="col-sm-8 p-0 d-inline">
-								<h5>Total</h5>
-							</div>
-							<div class="col-sm-4 p-2">
-								<p id="total">$ 22</p>
-							</div>
-						</div>
-						<a href="#"> <button id="btn-checkout" class="shopnow"><span>Checkout</span></button></a>
-					</div>
-				</div>
-			</div>
-
-		</main>
-		<div class="close-cart-btn"> <i class="fa-solid fa-x"></i></div>
-
-	</div>
-
 </div>
