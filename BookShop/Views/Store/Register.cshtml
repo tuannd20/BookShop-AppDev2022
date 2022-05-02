@@ -14,12 +14,13 @@
 </div>
 @if (SignInManager.IsSignedIn(User))
 {
-	<form asp-action="addStore" method="post">
+	<form asp-controller="Store" asp-action="addStore" method="post">
 		<div class="container w-50">
 			<div class="mb-3 g-3">
 				<label for="exampleFormControlInput1" class="form-label" asp-for="UserId">UserID:</label>
 				<input type="text" class="form-control" id="exampleFormControlInput1" value="@UserManager.GetUserId(User)" asp-for="UserId" readonly>
 			</div>
+			
 			<div class="mb-3 g-3">
 				<label for="exampleFormControlInput1" class="form-label">Store address:</label>
 				<input type="text" class="form-control" id="exampleFormControlInput1" asp-for="Address">
@@ -32,7 +33,7 @@
 				<label for="exampleFormControlTextarea1" class="form-label">Store name:</label>
 				<input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Example: BookTiki" asp-for="Slogan">
 			</div>
-			<button asp-route-ownerId="@UserManager.GetUserId(User)" type="submit" class="btn btn-primary">Submit</button>
+			<button type="submit" class="btn btn-primary">Submit</button>
 		</div>
 	</form>
 }
