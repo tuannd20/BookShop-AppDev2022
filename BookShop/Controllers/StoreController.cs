@@ -15,7 +15,7 @@ namespace BookShop.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View("Views/Store/Index.cshtml");
         }
 
         public IActionResult Register()

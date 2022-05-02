@@ -394,6 +394,31 @@ section {
             color: var(--light-color);
         }
 
+.login-dropdow {
+    position: relative;
+    display: inline-block;
+    transform: translateX(-50%);
+}
+
+.login-dropdow-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+    transform: translateX(-50%);
+}
+
+.login-dropdow-content-title {
+    font-size: 16px !important;
+}
+
+    .login-dropdow:hover .login-dropdow-content {
+        display: block;
+    }
+
 .swiper-wrapper-arrivals {
     display: flex;
     flex-direction: row;
