@@ -65,6 +65,14 @@
 			<a href="#arrivals">arrivals</a>
 			<a href="#reviews">reviews</a>
 			<a href="#blogs">helps</a>
+			@if (SignInManager.IsSignedIn(User))
+			{
+				<a asp-area="" asp-controller="Store" asp-action="ForSellerOnly">Store</a>
+			}
+			else
+			{
+				<a class="d-none" asp-area="" asp-controller="Home" asp-action="ForSellerOnly">Store</a>
+			}
 		</nav>
 	</div>
 
@@ -600,4 +608,3 @@
 	</div>
 
 </div>
-
