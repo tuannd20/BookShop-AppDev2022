@@ -1,27 +1,73 @@
-﻿using BookShop.Models;
+﻿using BookShop.Data;
+using BookShop.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace BookShop.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        /*        private readonly ILogger<HomeController> _logger;
+        */
+        private BookShopContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly int maxofpage = 10;
+
+        private readonly int rowsonepage = 4;
+
+        /* public HomeController(ILogger<HomeController> logger)
+         {
+             _logger = logger;
+         }*/
+        public HomeController(BookShopContext context)
         {
-            _logger = logger;
+            _context = context;
         }
-
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int id = 0, string searchString = "")
         {
-            return View();
+            ViewData["CurrentFilter"] = searchString;
+            var books = from s in _context.Books
+                        select s;
+            if (searchString != null)
+            {
+                books = books.Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
+                /*            students = students.Where(s => s.LastName);
+                */
+            }
+            int numOfFilteredStudent = books.Count();
+            ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredStudent / rowsonepage);
+            ViewBag.CurrentPage = id;
+            List<Book> booklist = await books.Skip(id * rowsonepage)
+                .Take(rowsonepage).ToListAsync();
+            if (id > 0)
+            {
+                ViewBag.idpagprev = id - 1;
+            }
+            ViewBag.idpagenext = id + 1;
+            ViewBag.currentPage = id;
+            return View(booklist);
+            /*            var books = await _context.Books.ToListAsync();
+            */
         }
-
         public IActionResult Privacy()
         {
             return View();
         }
+        /*        public async Task<IActionResult> AddToCart(string isbn)
+                {
+                    string thisUserId = _userManager.GetUserId(HttpContext.User);
+                    Cart myCart = new Cart() { UId = thisUserId, BookIsbn = isbn };
+                    Cart fromDb = _context.Cart.FirstOrDefault(c => c.UId == thisUserId && c.BookIsbn == isbn);
+                    //if not existing (or null), add it to cart. If already added to Cart before, ignore it.
+                    if (fromDb == null)
+                    {
+                        _context.Add(myCart);
+                        await _context.SaveChangesAsync();
+                    }
+                    return RedirectToAction("List");
+                }
+        */
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
