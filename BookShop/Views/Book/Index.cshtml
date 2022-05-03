@@ -6,7 +6,7 @@
 
 
 <p>
-    <a asp-action="Create">Create Book</a>
+    <a asp-action="Create" >Create Book</a>
 </p>
 
 <p>
@@ -22,7 +22,6 @@
         </p>
     </div>
 </form>
-
 <table class="table">
     <thead>
         <tr>
@@ -91,7 +90,7 @@
                  </div>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Store.Id)
+                @Html.DisplayFor(modelItem => item.Store.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Isbn">Edit</a> |
