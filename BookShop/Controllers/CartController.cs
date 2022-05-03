@@ -8,23 +8,33 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookShop.Data;
 using BookShop.Models;
+using BookShop.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace BookShop.Controllers
 {
     public class CartController : Controller
     {
         private readonly BookShopContext _context;
+        private readonly UserManager<BookShopUser> _userManager;
 
-        public CartController(BookShopContext context)
+        public CartController(BookShopContext context, UserManager<BookShopUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
+
         }
 
         // GET: Cart
         public async Task<IActionResult> Index()
         {
-           /* var bookShopContext = _context.Carts.Include(c => c.Book).Include(c => c.User);*/
-            return View("Views/Cart/Index.cshtml");
+            var userid = _userManager.GetUserId(HttpContext.User);
+
+            var bookShopContext = _context.Carts.Include(c => c.Book)
+                                                .Include(c => c.User)
+                                                .Where(u => u.UserId == userid);
+
+            return View(await bookShopContext.ToListAsync());
         }
 
         // GET: Cart/Details/5
@@ -128,36 +138,17 @@ namespace BookShop.Controllers
             return View(cart);
         }
 
-        // GET: Cart/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Remove(string cartId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var userid = _userManager.GetUserId(HttpContext.User);
 
-            var cart = await _context.Carts
-                .Include(c => c.Book)
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (cart == null)
-            {
-                return NotFound();
-            }
-
-            return View(cart);
-        }
-
-        // POST: Cart/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var cart = await _context.Carts.FindAsync(id);
+            var cart = _context.Carts.Where(s => s.UserId == userid).FirstOrDefault();
             _context.Carts.Remove(cart);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
+        // GET: Cart/Delete/5
 
         private bool CartExists(string id)
         {

@@ -14,7 +14,6 @@ public class BookShopContext : IdentityDbContext<BookShopUser>
     }
     public DbSet<Store> Stores { get; set; }
 
-
     public DbSet<Book> Books { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderDetail> OrderDetails { get; set; }

@@ -140,7 +140,7 @@ let productdetails = document.querySelectorAll(".fa-eye");
 let productdetail1 = document.querySelectorAll(".swiper-slide-arrivals");
 let openproductdetails = document.querySelector('.product-detail');
 let closeproductdetails = document.querySelector(".close-detail-btn");
-let carts = document.querySelector('.fa-shopping-cart');  
+let carts = document.querySelector('.fa-shopping-cart');
 let openpcarts = document.querySelector('.shop-cart');
 let closecarts = document.querySelector('.close-cart-btn');
 let cartItems = document.querySelector('.cart-item');
@@ -149,7 +149,7 @@ let totalbill = document.querySelector('.total-bill');
 productdetails.forEach(item => item.addEventListener("click", viewproductdetail));
 productdetail1.forEach(item => item.addEventListener("click", viewproductdetail));
 
-function viewproductdetail( ) {
+function viewproductdetail() {
     let listDetailItems = [];
     productItems.innerHTML = '';
     productImg.innerHTML = '';
@@ -159,7 +159,7 @@ function viewproductdetail( ) {
     const title = currentDetailBtn.dataset.title;
     console.log("title", title);
     const price = currentDetailBtn.dataset.price;
-    console.log("title", price); 
+    console.log("title", price);
     const description = currentDetailBtn.dataset.description;
     console.log("description", description);
     const category = currentDetailBtn.dataset.category;
@@ -170,17 +170,18 @@ function viewproductdetail( ) {
     listDetailItems.push(item);
 
     listDetailItems.forEach(item => {
-        let productDetailItem =  `               
+        let productDetailItem = `               
                 <p class = "product product-title">${item.title}</p>
                 <p class="product product-category" data-category="${item.category}" data-id="123"> <span class = "title-bold">Category: </span> ${item.category} </p>
                 <p class = "product product-description"> <span class = "title-bold">Description:</span> ${item.description} </p>
                 <p class="product product-price">  ${item.price} </p>
-                <a href="home/AddToCart/?Isbn=${item.isbn}" class="btn1 btn-cart>Add to cart</a>
+               
+                <a href="home/AddToCart/?Isbn=${item.isbn}" class="btn1 btn-cart">Add to cart</a>
             `;
-        let productDetailItemImg =  `
+        let productDetailItemImg = `
                 <img src="/img/${item.url}" alt="">               
             `;
-    
+
         productItems.insertAdjacentHTML("afterbegin", productDetailItem);
         productImg.insertAdjacentHTML("afterbegin", productDetailItemImg);
 

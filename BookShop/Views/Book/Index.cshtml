@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+@Html.Raw(TempData["msg"])
 
 <p>
     <a asp-action="Create" >Create Book</a>
@@ -13,7 +13,7 @@
     <a asp-action="RecordOrder">Record Order</a>
 </p>
 
-    <form asp-action="Index" method="get">
+    <form  asp-action="Index" method="get">
     <div class="form-actions ">
         <p>
             Find by name: <input  type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
