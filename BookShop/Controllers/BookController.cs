@@ -49,6 +49,17 @@ namespace BookShop.Controllers
             return View(studentsList);
         }
 
+        public async Task<IActionResult> SearchBook(int id = 0, string searchString = "")
+        {
+            ViewData["CurrentFilter"] = searchString;
+            var books = from s in _context.Books
+                           select s;
+            books = books.Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
+            List<Book> booksList = await books.Skip(id * rowsonepage)
+               .Take(rowsonepage).ToListAsync();
+            return View("Views/Book/Search.cshtml", booksList);
+        }
+
 
         // GET: Book/Details/5
         public async Task<IActionResult> Details(string id)
