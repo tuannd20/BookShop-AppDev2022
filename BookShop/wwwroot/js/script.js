@@ -175,7 +175,7 @@ function viewproductdetail( ) {
                 <p class="product product-category" data-category="${item.category}" data-id="123"> <span class = "title-bold">Category: </span> ${item.category} </p>
                 <p class = "product product-description"> <span class = "title-bold">Description:</span> ${item.description} </p>
                 <p class="product product-price">  ${item.price} </p>
-                <a asp-action="AddToCart" asp-route-isbn="${item.isbn}" class="btn1 btn-cart" >Add to cart</a>
+                <a href="home/AddToCart/?Isbn=${item.isbn}" class="btn1 btn-cart>Add to cart</a>
             `;
         let productDetailItemImg =  `
                 <img src="/img/${item.url}" alt="">               
@@ -188,7 +188,6 @@ function viewproductdetail( ) {
     listDetailItems.unshift(item);
 
 }
-
 
 
 /*shoppingCartBtn.addEventListener("click", function addToCart(event) {

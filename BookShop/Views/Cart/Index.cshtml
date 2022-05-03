@@ -1,41 +1,88 @@
-﻿@model IEnumerable<BookShop.Models.Cart>
-
-@{
-    ViewData["Title"] = "Index";
+﻿@{
+	ViewData["Title"] = "Users Page";
+	Layout = "~/Views/Shared/_LayoutUser.cshtml";
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Book.Isbn)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container">
+	<h1 class="mt-4">Shopping Cart</h1>
+
+	<div class="container mt-5 border border-dark w-100 p-3 aligns-items-center justify-content-center">
+		<div>
+			<img src="https://s.udemycdn.com/browse_components/flyout/empty-shopping-cart-v2.jpg" class="rounded mx-auto d-block" alt="...">
+		</div>
+		<p class="text-center fs-3">Your cart is empty. Keep shopping to find a book!</p>
+		<div class="d-flex aligns-items-center justify-content-center">
+			<a class="p-3 fs-3 btn btn-success" asp-controller="Home" asp-action="Index" role="button">Keep shopping</a>
+		</div>
+	</div>
+
+	<div class="container mt-5 border border-dark w-100 p-3">
+
+		<table class="table table-hover fs-3 aligns-items-center justify-content-center">
+			<thead>
+				<tr>
+					<th scope="col" class="text-center">#</th>
+					<th scope="col" class="text-center">Title</th>
+					<th scope="col" class="text-center">Image</th>
+					<th scope="col" class="text-center">Quantity</th>
+					<th scope="col" class="text-center">Price</th>
+					<th scope="col" class="text-center">Action</th>
+				</tr>
+			</thead>
+			<tbody class="aligns-items-center justify-content-center">
+				<tr>
+					<th scope="row" class="text-center align-middle">1</th>
+					<td class="text-center align-middle">Book Title</td>
+					<td class="text-center align-middle" style="width: 28%;">
+						<img src="https://product.hstatic.net/200000343865/product/tham-tu-lung-danh-conan-tap-5-k75qr_3d090a61dd2444d98a451f168f5f3b62_master.jpg" class="img-thumbnail w-25" alt="...">
+					</td>
+					<td class="text-center align-middle" style="width: 8%;">
+						<div class="col-sm">
+							<input type="number" class="fs-3 form-control text-center">
+						</div>
+					</td>
+					<td class="text-center align-middle">100</td>
+					<td class="text-center align-middle">
+						<a class="btn btn-danger p-3 fs-3 fa-solid fa-trash-can"></a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row" class="text-center align-middle">2</th>
+					<td class="text-center align-middle">Book Title</td>
+					<td class="text-center align-middle" style="width: 28%;">
+						<img src="https://cf.shopee.vn/file/e8f2c7d4ed79df516bb532285338fef2" class="img-thumbnail w-25" alt="...">
+					</td>
+					<td class="text-center align-middle">
+						<div class="col-sm">
+							<input type="number" class="fs-3 form-control text-center">
+						</div>
+					</td>
+					<td class="text-center align-middle">200</td>
+					<td class="text-center align-middle">
+						<a class="btn btn-danger p-3 fs-3 fa-solid fa-trash-can"></a>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row" class="text-center align-middle">3</th>
+					<td class="text-center align-middle">Book Title</td>
+					<td class="text-center align-middle" style="width: 28%;">
+						<img src="https://product.hstatic.net/200000343865/product/57_3_3970c042906743279a6cf272e2193d41_master.jpg" class="img-thumbnail w-25" alt="...">
+					</td>
+					<td class="text-center align-middle">
+						<div class="col-sm">
+							<input type="number" class="fs-3 form-control text-center">
+						</div>
+					</td>
+					<td class="text-center align-middle">300</td>
+					<td class="text-center align-middle">
+						<a class="btn btn-danger p-3 fs-3 fa-solid fa-trash-can"></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="d-flex flex-row-reverse" style="margin-right: 4%;">
+			<a class="btn btn-success p-3 fs-3">Checkout</a>
+		</div>
+	</div>
+</div>

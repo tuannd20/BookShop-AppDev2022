@@ -59,8 +59,7 @@ namespace BookShop.Controllers
             ViewBag.idpagenext = id + 1;
             ViewBag.currentPage = id;
             return View(booklist);
-            /*            var books = await _context.Books.ToListAsync();
-            */
+           
         }
 
         [Authorize(Roles = "Seller")]
@@ -76,20 +75,26 @@ namespace BookShop.Controllers
         {
             return View();
         }
-/*        public async Task<IActionResult> AddToCart(string isbn)
+         public IActionResult Profile()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> AddToCart(string isbn)
         {
             string thisUserId = _userManager.GetUserId(HttpContext.User);
-            Cart myCart = new Cart() { UId = thisUserId, BookIsbn = isbn };
-            Cart fromDb = _context.Cart.FirstOrDefault(c => c.UId == thisUserId && c.BookIsbn == isbn);
+            Console.WriteLine(thisUserId);            
+            Cart myCart = new Cart() { UserId = thisUserId, BookIsbn = isbn };
+            Cart fromDb = _context.Carts.FirstOrDefault(c => c.UserId == thisUserId && c.BookIsbn == isbn);
             //if not existing (or null), add it to cart. If already added to Cart before, ignore it.
             if (fromDb == null)
             {
                 _context.Add(myCart);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction("List");
+            return RedirectToAction("Index");
         }
-*/
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

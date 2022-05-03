@@ -55,15 +55,16 @@ public class BookShopContext : IdentityDbContext<BookShopUser>
         builder.Entity<Cart>().ToTable("Cart");
 
         builder.Entity<Cart>()
-           .ToTable("Cart")
-           .HasKey(c => new { c.UserId, c.BookIsbn });
-        builder.Entity<BookShopUser>()
-           .HasOne<Cart>(au => au.Carts)
-           .WithOne(st => st.User)
-           .HasForeignKey<Cart>(st => st.UserId);
+       .HasKey(c => new { c.UserId, c.BookIsbn });
+        builder.Entity<Cart>()
+            .HasOne<BookShopUser>(c => c.User)
+            .WithMany(u => u.Carts)
+            .HasForeignKey(c => c.UserId);
         builder.Entity<Cart>()
             .HasOne<Book>(od => od.Book)
             .WithMany(b => b.Carts)
-            .HasForeignKey(od => od.BookIsbn);
+            .HasForeignKey(od => od.BookIsbn)
+            .OnDelete(DeleteBehavior.NoAction);
+
     }
 }

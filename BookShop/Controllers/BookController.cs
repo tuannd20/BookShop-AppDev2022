@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookShop.Areas.Identity.Data;
 using BookShop.Data;
 using BookShop.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,29 +18,36 @@ namespace BookShop.Controllers
     {
         private readonly BookShopContext _context;
 
+        private readonly UserManager<BookShopUser> _userManager;
+
+
         private readonly int maxofpage = 10;
 
         private readonly int rowsonepage = 4;
 
-
-        public BookController(BookShopContext context)
+        public BookController(BookShopContext context, UserManager<BookShopUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
+
         }
 
         // GET: Book
         public async Task<IActionResult> Index(int id = 0, string searchString = "")
         {
+            var userid = _userManager.GetUserId(HttpContext.User);
             ViewData["CurrentFilter"] = searchString;
-            var students = from s in _context.Books
+            var books = from s in _context.Books
                            select s;
-            students = students.Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
+            books = books.Include(s => s.Store).ThenInclude(u => u.User)
+                .Where(u => u.Store.User.Id == userid)
+                .Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
             /*            students = students.Where(s => s.LastName);
             */
-            int numOfFilteredStudent = students.Count();
+            int numOfFilteredStudent = books.Count();
             ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredStudent / rowsonepage);
             ViewBag.CurrentPage = id;
-            List<Book> studentsList = await students.Skip(id * rowsonepage)
+            List<Book> studentsList = await books.Skip(id * rowsonepage)
                 .Take(rowsonepage).ToListAsync();
             if (id > 0)
             {
@@ -72,8 +81,12 @@ namespace BookShop.Controllers
         // GET: Book/Create
         public async Task<IActionResult> Create()
         {
-           
-            ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Id");
+            var userid = _userManager.GetUserId(HttpContext.User);
+
+
+            ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;
+
+            
             return View();
         }   
         public async Task<IActionResult> RecordOrder()
@@ -89,8 +102,11 @@ namespace BookShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Isbn,StoreId,Category,Title,Pages,Author,Price,Desc,ImgUrl")] Book book, IFormFile image)
         {
-            if(ModelState.IsValid)
+           
+
+            if (ModelState.IsValid)
             {
+                var userid1 = _userManager.GetUserId(HttpContext.User);
                 string imgName = book.Isbn + Path.GetExtension(image.FileName);
                 string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
                 using(var stream = new FileStream(savePath, FileMode.Create))
@@ -98,6 +114,9 @@ namespace BookShop.Controllers
                     image.CopyTo(stream);
                 }
                 book.ImgUrl = imgName;
+
+                Store thisStore = _context.Stores.Where(s => s.UserId == userid1).FirstOrDefault();
+                book.StoreId = thisStore.Id;
                 _context.Add(book);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -128,17 +147,32 @@ namespace BookShop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Isbn,StoreId,Title,Pages,Author,Category,Price,Desc,ImgUrl")] Book book)
+        public async Task<IActionResult> Edit([Bind("Isbn,StoreId,Title,Pages,Author,Category,Price,Desc,ImgUrl")] Book book, IFormFile image)
         {
-            if (id != book.Isbn)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
+                    
+                    if(image == null)
+                    {
+                        Book thisProduct = _context.Books.Where(p => p.Isbn == book.Isbn).AsNoTracking().FirstOrDefault();
+                        book.ImgUrl = thisProduct.ImgUrl;
+
+                    }
+                    else
+                    {
+                        string imgName = book.Isbn + Path.GetExtension(image.FileName);
+                        string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
+                        using (var stream = new FileStream(savePath, FileMode.Create))
+                        {
+                            image.CopyTo(stream);
+                        }
+                        book.ImgUrl = imgName;
+                    }
+                    var userid1 = _userManager.GetUserId(HttpContext.User);
+                    Store thisStore = _context.Stores.Where(s => s.UserId == userid1).FirstOrDefault();
+                    book.StoreId = thisStore.Id;
                     _context.Update(book);
                     await _context.SaveChangesAsync();
                 }
