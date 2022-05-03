@@ -102,25 +102,33 @@ namespace BookShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Isbn,StoreId,Category,Title,Pages,Author,Price,Desc,ImgUrl")] Book book, IFormFile image)
         {
-           
 
-            if (ModelState.IsValid)
+            try
             {
-                var userid1 = _userManager.GetUserId(HttpContext.User);
-                string imgName = book.Isbn + Path.GetExtension(image.FileName);
-                string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
-                using(var stream = new FileStream(savePath, FileMode.Create))
+                if (ModelState.IsValid)
                 {
-                    image.CopyTo(stream);
-                }
-                book.ImgUrl = imgName;
+                    var userid1 = _userManager.GetUserId(HttpContext.User);
+                    string imgName = book.Isbn + Path.GetExtension(image.FileName);
+                    string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
+                    using (var stream = new FileStream(savePath, FileMode.Create))
+                    {
+                        image.CopyTo(stream);
+                    }
+                    book.ImgUrl = imgName;
 
-                Store thisStore = _context.Stores.Where(s => s.UserId == userid1).FirstOrDefault();
-                book.StoreId = thisStore.Id;
-                _context.Add(book);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    Store thisStore = _context.Stores.Where(s => s.UserId == userid1).FirstOrDefault();
+                    book.StoreId = thisStore.Id;
+                    _context.Add(book);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            catch (DbUpdateException)
+            {
+                TempData["msg"] = "<script>alert('You already add this to cart');</script>";
+             
+            }
+           
             ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Id", book.StoreId);
             return View(book);
         }

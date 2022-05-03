@@ -72,7 +72,7 @@
 			<a href="#arrivals">arrivals</a>
 			<a href="#reviews">reviews</a>
 			<a href="#blogs">helps</a>
-			@if (User.IsInRole("seller"))
+			@if (User.IsInRole("Seller"))
 			{
 				<a asp-area="" asp-controller="Store" asp-action="ForSellerOnly">Store</a>
 			}

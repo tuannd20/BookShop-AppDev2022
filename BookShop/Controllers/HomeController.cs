@@ -82,17 +82,29 @@ namespace BookShop.Controllers
 
         public async Task<IActionResult> AddToCart(string isbn)
         {
-            string thisUserId = _userManager.GetUserId(HttpContext.User);
-            Console.WriteLine(thisUserId);            
-            Cart myCart = new Cart() { UserId = thisUserId, BookIsbn = isbn };
-            Cart fromDb = _context.Carts.FirstOrDefault(c => c.UserId == thisUserId && c.BookIsbn == isbn);
-            //if not existing (or null), add it to cart. If already added to Cart before, ignore it.
-            if (fromDb == null)
+            var thisUserId = _userManager.GetUserId(HttpContext.User);
+            Store thisStore = _context.Stores.FirstOrDefault(s => s.UserId == thisUserId);
+
+            if (thisStore != null)
             {
-                _context.Add(myCart);
-                await _context.SaveChangesAsync();
+                TempData["msg"] = "<script>alert('You already add this to cart');</script>";
+                return RedirectToAction("Index");
+
             }
-            return RedirectToAction("Index");
+            else
+            {
+                Console.WriteLine(thisUserId);
+                Cart myCart = new Cart() { UserId = thisUserId, BookIsbn = isbn };
+                Cart fromDb = _context.Carts.FirstOrDefault(c => c.UserId == thisUserId && c.BookIsbn == isbn);
+                //if not existing (or null), add it to cart. If already added to Cart before, ignore it.
+                if (fromDb == null)
+                {
+                    _context.Add(myCart);
+                    await _context.SaveChangesAsync();
+                }
+                return RedirectToAction("Index");
+
+            }
         }
 
 
