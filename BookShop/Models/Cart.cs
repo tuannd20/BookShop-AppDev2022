@@ -14,6 +14,9 @@ namespace BookShop.Models
         public string UserId { get; set; }
         public string BookIsbn { get; set; }
 
+        public int? Quantity { get; set; }
+
+
         [ValidateNever]
         public BookShopUser User { get; set; }
 

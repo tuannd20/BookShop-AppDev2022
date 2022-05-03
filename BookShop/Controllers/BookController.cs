@@ -60,6 +60,17 @@ namespace BookShop.Controllers
             return View(studentsList);
         }
 
+        public async Task<IActionResult> SearchBook(int id = 0, string searchString = "")
+        {
+            ViewData["CurrentFilter"] = searchString;
+            var books = from s in _context.Books
+                           select s;
+            books = books.Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
+            List<Book> booksList = await books.Skip(id * rowsonepage)
+               .Take(rowsonepage).ToListAsync();
+            return View("Views/Book/Search.cshtml", booksList);
+        }
+
 
         // GET: Book/Details/5
         public async Task<IActionResult> Details(string id)
@@ -110,25 +121,33 @@ namespace BookShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Isbn,StoreId,Category,Title,Pages,Author,Price,Desc,ImgUrl")] Book book, IFormFile image)
         {
-           
 
-            if (ModelState.IsValid)
+            try
             {
-                var userid1 = _userManager.GetUserId(HttpContext.User);
-                string imgName = book.Isbn + Path.GetExtension(image.FileName);
-                string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
-                using(var stream = new FileStream(savePath, FileMode.Create))
+                if (ModelState.IsValid)
                 {
-                    image.CopyTo(stream);
-                }
-                book.ImgUrl = imgName;
+                    var userid1 = _userManager.GetUserId(HttpContext.User);
+                    string imgName = book.Isbn + Path.GetExtension(image.FileName);
+                    string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
+                    using (var stream = new FileStream(savePath, FileMode.Create))
+                    {
+                        image.CopyTo(stream);
+                    }
+                    book.ImgUrl = imgName;
 
-                Store thisStore = _context.Stores.Where(s => s.UserId == userid1).FirstOrDefault();
-                book.StoreId = thisStore.Id;
-                _context.Add(book);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    Store thisStore = _context.Stores.Where(s => s.UserId == userid1).FirstOrDefault();
+                    book.StoreId = thisStore.Id;
+                    _context.Add(book);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            catch (DbUpdateException)
+            {
+                TempData["msg"] = "<script>alert('You already add this to cart');</script>";
+             
+            }
+           
             ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Id", book.StoreId);
             return View(book);
         }
