@@ -72,7 +72,7 @@
 			<a href="#arrivals">arrivals</a>
 			<a href="#reviews">reviews</a>
 			<a asp-controller="Home" asp-action="Search">helps</a>
-			@if (SignInManager.IsSignedIn(User))
+			@if (User.IsInRole("seller"))
 			{
 				<a asp-area="" asp-controller="Store" asp-action="ForSellerOnly">Store</a>
 			}
