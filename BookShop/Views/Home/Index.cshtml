@@ -34,7 +34,7 @@
 				<div class="login-dropdow">
 					<a class="fas fa-user"></a>
 					<div class="login-dropdow-content">
-						<a class="login-dropdow-content-title" asp-area="Identity" asp-page="/Account/Manage/Index">@UserManager.GetUserName(User)!</a>
+						<a class="login-dropdow-content-title" asp-action= "Profile">@UserManager.GetUserName(User)!</a>
 						@*<a class="login-dropdow-content-title" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Logout</a>*@
 						<div class="aligns-items-center justify-content-center">
 							<form class="login-dropdow-content-title aligns-items-center justify-content-center" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
@@ -65,7 +65,7 @@
 			<a href="#arrivals">arrivals</a>
 			<a href="#reviews">reviews</a>
 			<a href="#blogs">helps</a>
-			@if (SignInManager.IsSignedIn(User))
+			@if(User.IsInRole("Seller"))
 			{
 				<a asp-area="" asp-controller="Store" asp-action="ForSellerOnly">Store</a>
 			}
@@ -541,6 +541,7 @@
 				<div class="row align-items-start">
 					<div class="col-12 col-sm-8 items cart-item">
 						<!--1-->
+
 						<div class="cartItem row align-items-start">
 							<div class="col-3 mb-2">
 								<img class="w-100" src="~/image/book-1.png" alt="art image">
