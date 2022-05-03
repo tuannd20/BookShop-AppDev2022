@@ -27,7 +27,7 @@
 	<div class="header-1">
 		<a href="#" class="logo"> <i class="fas fa-book"></i> bookly </a>
 
-		<form asp-action="Index" method="get" class="search-form">
+		<form asp-controller="Book" asp-action="SearchBook" method="get" class="search-form">
 			<input type="search" name="SearchString" value="@ViewData["CurrentFilter"]" placeholder="Search here..." id="search-box">
 			<input type="submit" value="Search" class="submit-search">
 		</form>
@@ -67,12 +67,12 @@
 
 	<div class="header-2">
 		<nav class="navbar-1">
-			<a href="#home">home</a>
+			<a asp-controller="Home" asp-action="Index">home</a>
 			<a href="#featured">featured</a>
 			<a href="#arrivals">arrivals</a>
 			<a href="#reviews">reviews</a>
 			<a asp-controller="Home" asp-action="Search">helps</a>
-			@if (User.IsInRole("seller"))
+			@if (User.IsInRole("Seller"))
 			{
 				<a asp-area="" asp-controller="Store" asp-action="ForSellerOnly">Store</a>
 			}
