@@ -71,7 +71,7 @@
 			<a href="#featured">featured</a>
 			<a href="#arrivals">arrivals</a>
 			<a href="#reviews">reviews</a>
-			<a href="#blogs">helps</a>
+			<a asp-controller="Home" asp-action="Search" >helps</a>
 			@if (User.IsInRole("Seller"))
 			{
 				<a asp-area="" asp-controller="Store" asp-action="ForSellerOnly">Store</a>
