@@ -71,6 +71,10 @@ namespace BookShop.Controllers
             return View("Views/Store/Index.cshtml");
         }
 
+        public IActionResult Search()
+        {
+            return View("Views/Home/Search.cshtml");
+        }
 
         public IActionResult Privacy()
         {
