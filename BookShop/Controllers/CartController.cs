@@ -148,7 +148,37 @@ namespace BookShop.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        // GET: Cart/Delete/5
+
+        public async Task<IActionResult> AddToCart(int? quantity , string isbn)
+        {
+            var thisUserId = _userManager.GetUserId(HttpContext.User);
+            Store thisStore = _context.Stores.FirstOrDefault(s => s.UserId == thisUserId);
+            if (quantity == null)
+            {
+                quantity = 1;
+            }
+            if (thisStore != null)
+            {
+                TempData["msg"] = "<script>alert('You are seller. Can't get in here.');</script>";
+                return RedirectToAction("Index");
+
+            }
+            else
+            {
+                Cart myCart = new Cart() { UserId = thisUserId, BookIsbn = isbn, Quantity = quantity };
+                Cart fromDb = _context.Carts.FirstOrDefault(c => c.UserId == thisUserId && c.BookIsbn == isbn);
+                    //if not existing (or null), add it to cart. If already added to Cart before, ignore it.
+                    if (fromDb == null)
+                    {
+                        _context.Add(myCart);
+                        await _context.SaveChangesAsync();
+
+                    }
+                return RedirectToAction("Index");
+
+            }
+        }
+
 
         private bool CartExists(string id)
         {

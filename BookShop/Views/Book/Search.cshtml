@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<BookShop.Models.Book>
+@Html.Raw(TempData["msg"])
+
 @{
 	ViewData["Title"] = "BookFPT";
 	Layout = "~/Views/Shared/_LayoutUser.cshtml";
@@ -14,7 +16,7 @@
 		@foreach (var item in Model)
 		{
 		<div class="row row-cols-1 row-cols-md-2 g-4 align-items-center justify-content-center">
-			<a class="" asp-controller="Home" asp-action="Index">
+			<a class="" asp-action="DisplayBook" asp-route-isbn = "@item.Isbn">
 			<div class="col card mb-2 ms-5 w-75" style="width: 50%;">
 				<div class="g-0 d-flex flex-row">
 					<div class="col-3 align-items-center" style="width: 100%;">
@@ -23,7 +25,7 @@
 					<div class="col-9">
 						<div class="card-body fs-3">
 							<h3 class="card-title fs-2 text-dark">@Html.DisplayFor(modelItem => item.Title)</h3>
-							<h5 class="card-title fs-3 text-dark">@Html.DisplayFor(modelItem => item.Author)</h5>
+							<h5 class="card-title fs-3 text-dark">@Html.DisplayFor(modelItem => item.Category)</h5>
 							<p class="card-text text-dark" style="text-align: justify;">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
 							<p class="card-text text-dark"> @Html.DisplayFor(modelItem => item.Store.Id)</p>
 							<div class="d-flex justify-content-between">
@@ -37,7 +39,7 @@
 								</div>
 							</div>
 							<div>
-								<a asp-controller="Cart" asp-action="Index" class="btn btn-success fs-3">Add to cart</a>
+								<a asp-controller="Cart" asp-action="AddToCart" asp-route-isbn = "@item.Isbn" class="btn btn-success fs-3">Add to cart</a>
 							</div>
 						</div>
 					</div>
@@ -46,5 +48,28 @@
 			</a>
 		</div>
 		}
+	<nav aria-label="...">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a class="page-link" href="/Book/SearchBook/@ViewBag.idpagprev" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            @for (var i = 0; i < ViewBag.NumberOfPages; i++)
+            {
+                var style = (ViewBag.currentPage == @i) ? "active" : "";
+                <li class="page-item @style " aria-current="page">
+                    <a asp-action="SearchBook" asp-route-id="@(i)" asp-route-SearchString="@ViewData["CurrentFilter"]" class="page-link">@(i +1 ) </a>
+                </li>
+
+            }
+
+            <li class="page-item">
+                <a class="page-link" href="/Book/SearchBook/@ViewBag.idpagenext" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+	</nav>
 	</div>
 </div>
