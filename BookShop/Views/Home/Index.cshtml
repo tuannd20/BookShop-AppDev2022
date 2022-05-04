@@ -103,7 +103,7 @@
     <div class="swiper-wrapper-arrivals text-dark">
         @foreach (var book in Model)
         {
-            <a asp-controller="Book" asp-action="DisplayBook">
+            <a asp-controller="Book" asp-action="DisplayBook" asp-route-isbn = "@book.Isbn">
                 <div class="swiper-slide-arrivals"
                  data-title="@book.Title"
                  data-price="@book.Price"
@@ -397,7 +397,7 @@
 
 <!-- blogs section ends -->
 <!-- footer section starts  -->
-<<<<<<< HEAD
+
 @*
 <div class="product-detail">
 =======
