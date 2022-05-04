@@ -81,7 +81,7 @@ namespace BookShop.Controllers
         }
          public IActionResult Profile()
         {
-            return View();
+            return View("Views/Home/Profile.cshtml");
         }
 
         public async Task<IActionResult> AddToCart(string isbn)
