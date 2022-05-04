@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BookShop.Areas.Identity.Data;
 using BookShop.Data;
 using BookShop.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -33,6 +34,7 @@ namespace BookShop.Controllers
         }
 
         // GET: Book
+        [Authorize(Roles = "Seller")]
         public async Task<IActionResult> Index(int id = 0, string searchString = "")
         {
             var userid = _userManager.GetUserId(HttpContext.User);
@@ -58,6 +60,17 @@ namespace BookShop.Controllers
             return View(studentsList);
         }
 
+        public async Task<IActionResult> SearchBook(int id = 0, string searchString = "")
+        {
+            ViewData["CurrentFilter"] = searchString;
+            var books = from s in _context.Books
+                           select s;
+            books = books.Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
+            List<Book> booksList = await books.Skip(id * rowsonepage)
+               .Take(rowsonepage).ToListAsync();
+            return View("Views/Book/Search.cshtml", booksList);
+        }
+
 
         // GET: Book/Details/5
         public async Task<IActionResult> Details(string id)
@@ -76,6 +89,12 @@ namespace BookShop.Controllers
             }
 
             return View(book);
+        }
+
+        public async Task<IActionResult> DisplayBook()
+        {
+
+            return View("Views/Book/BookDetails.cshtml");
         }
 
         // GET: Book/Create

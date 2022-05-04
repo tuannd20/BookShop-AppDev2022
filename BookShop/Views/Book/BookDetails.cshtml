@@ -1,0 +1,42 @@
+﻿@model IEnumerable<BookShop.Models.Book>
+
+@{
+	ViewData["Title"] = "Index";
+	Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+<div class="container">
+	<div class="card mb-3 mt-3 align-items-center justify-content-center" style="width: 86%; margin-left: 6%;">
+		<div class="row g-0">
+			<div class="col-md-4">
+				<img src="https://product.hstatic.net/200000343865/product/57_3_3970c042906743279a6cf272e2193d41_master.jpg" class="img-fluid rounded-start" alt="...">
+			</div>
+			<div class="col-md-8">
+				<div class="card-body fs-3">
+					<h5 class="card-title fs-2">Card title</h5>
+					<p class="card-text fs-4">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+					<div class="d-flex justify-content-between">
+						<p class="card-text text-dark"><small class="text-muted">Price: 300</small></p>
+						<div class="stars me-3">
+							<i class="fas fa-star" style="color: #F5BA3D;"></i>
+							<i class="fas fa-star" style="color: #F5BA3D;"></i>
+							<i class="fas fa-star" style="color: #F5BA3D;"></i>
+							<i class="fas fa-star" style="color: #F5BA3D;"></i>
+							<i class="fas fa-star-half-alt" style="color: #F5BA3D;"></i>
+						</div>
+					</div>
+					<div>
+						<div class="product-quantity">
+							<label class="title-bold">Quantity: </label>
+							<div class="input-group1">
+								<button id="down" class=" btn-input btn-input-down" onclick=" down('0')"><ion-icon name="remove-outline"></ion-icon></button>
+								<input type="text" id="myNumber" class=" input-number" value="1" />
+								<button id="up" class=" btn-input" onclick="up('100')"><ion-icon name="add-outline"></ion-icon></button>
+							</div>
+						</div>
+						<a asp-controller="Cart" asp-action="Index" class="btn btn-success fs-3">Add to cart</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

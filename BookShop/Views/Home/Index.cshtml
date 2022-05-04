@@ -100,32 +100,33 @@
 
     <h1 class="heading"> <span>new arrivals</span> </h1>
 
-    <div class="swiper-wrapper-arrivals">
+    <div class="swiper-wrapper-arrivals text-dark">
         @foreach (var book in Model)
         {
-            <div class="swiper-slide-arrivals"
-             data-title="@book.Title"
-             data-price="@book.Price"
-             data-description="@book.Desc"
-             data-category="@book.Category"
-             data-url="@book.ImgUrl"
-             data-isbn="@book.Isbn">
-                <div class="image">
-                    <img src="~/img/@book.ImgUrl" alt="">
-                </div>
-                <div class="content">
-                    <h3>@book.Title</h3>
-                    <div class="price">$@book.Price</div>
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
+            <a asp-controller="Book" asp-action="DisplayBook">
+                <div class="swiper-slide-arrivals"
+                 data-title="@book.Title"
+                 data-price="@book.Price"
+                 data-description="@book.Desc"
+                 data-category="@book.Category"
+                 data-url="@book.ImgUrl"
+                 data-isbn="@book.Isbn">
+                    <div class="image">
+                        <img src="~/img/@book.ImgUrl" alt="">
+                    </div>
+                    <div class="content">
+                        <h3>@book.Title</h3>
+                        <div class="price">$@book.Price</div>
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
-
+            </a>
         }
     </div>
 
@@ -396,8 +397,12 @@
 
 <!-- blogs section ends -->
 <!-- footer section starts  -->
+<<<<<<< HEAD
 @*
 <div class="product-detail">
+=======
+@*<div class="product-detail">
+>>>>>>> dev
 	<div class="product-items">
 		<div class="product-img">
 			<img src="~/img/300.jpg" alt="">
