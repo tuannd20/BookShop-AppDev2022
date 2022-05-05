@@ -130,9 +130,7 @@ namespace BookShop.Controllers
             var userid = _userManager.GetUserId(HttpContext.User);
 
 
-            ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;
-
-            
+            ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;        
             return View();
         }   
 
@@ -180,7 +178,8 @@ namespace BookShop.Controllers
             {
                 TempData["msg"] = "<script>alert('You are seller. Can't get in here.');</script>";
              
-            }    
+            }
+           
             return View(book);
         }
 
