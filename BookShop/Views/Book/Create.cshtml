@@ -1,9 +1,10 @@
 ﻿@model BookShop.Models.Book
 @Html.Raw(TempData["msg"])
 
-<h1>Create</h1>
-
-<h4>Book</h4>
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_LayoutSeller.cshtml";
+}
 <hr />
 <div class="row">
     <div class="col-md-4">

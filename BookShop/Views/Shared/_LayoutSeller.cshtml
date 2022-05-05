@@ -1,5 +1,8 @@
-﻿@model IEnumerable<BookShop.Models.Book>
+﻿@using Microsoft.AspNetCore.Identity
+@using BookShop.Areas.Identity.Data
 
+@inject SignInManager<BookShopUser> SignInManager
+@inject UserManager<BookShopUser> UserManager
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,103 +10,96 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+          crossorigin="anonymous" />
+    <link rel="stylesheet"
+          href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css" />
     <link rel="stylesheet" href="~/css/store.css" />
 </head>
 <body>
-        <input type="checkbox" name="" id="nav-toggle">
+    <input type="checkbox" name="" id="nav-toggle">
     <!-- Start sidebar -->
     <div class="sidebar">
-      <div class="sidebar-brand">
-        <h3><span class="lab la-accusoft"></span> <span>BookStore</span></h3>
-      </div>
+        <div class="sidebar-brand">
+            <h3><span class="lab la-accusoft"></span> <span>BookStore</span></h3>
+        </div>
 
-      <div class="sidebar-menu">
-        <ul>
-          <li class="">
-            <a href="" class="active">
-              <span class="las la-home"></span>
-              <span>Dashboard</span>
-            </a>
-          </li>
-          <li>
-            <a asp-controller="Book" asp-action="Create" >
-              <span class="las la-clipboard-list"></span>
-              <span>Create Book</span>
-            </a>
-          </li>
-             <li>
-            <a asp-controller="Book" asp-action="RecordOrder">
-              <span class="las la-clipboard-list"></span>
-              <span>Record Order</span>
-            </a>
-          </li>
-          <li>
-            <a asp-controller="Home" asp-action="Index">
-              <span class="las la-chevron-left"></span>
-              <span>Back</span>
-            </a>
-          </li>
-          <li>
-            <a href="">
-              <span class="las la-sign-out-alt"></span>
-              <span>Logout</span>
-            </a>
-          </li>
-        </ul>
-      </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li class="">
+                    <a href="" class="active">
+                        <span class="las la-home"></span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Book" asp-action="Create">
+                        <span class="las la-clipboard-list"></span>
+                        <span>Create Book</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Order" asp-action="RecordOrder">
+                        <span class="las la-clipboard-list"></span>
+                        <span>Record Order</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Home" asp-action="Index">
+                        <span class="las la-chevron-left"></span>
+                        <span>Back</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="">
+                        <span class="las la-sign-out-alt"></span>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div class="main-content">
-      <!-- Header section -->
-      <header class="main-header">
-        <div class="main-header">
-          <h3>
-          <label for="nav-toggle">
-            <span class="las la-bars"></span>
-          </label>
-          Dashboard
-        </h3>
+        <!-- Header section -->
+        <header class="main-header">
+            <div class="main-header">
+                <h3>
+                    <label for="nav-toggle">
+                        <span class="las la-bars"></span>
+                    </label>
+                    Dashboard
+                </h3>
 
-        <div class="search-wrapper">
-          <form asp-controller="Book" asp-action="Index" method="get">
-			<input type="search" name="SearchString" value="@ViewData["CurrentFilter"]" placeholder="Search here..."  >
-			<input type="submit" value="Search" class="submit-search">
-		</form>
-        </div>
+                <div class="search-wrapper">
+                    <form asp-controller="Book" asp-action="Index" method="get">
+                        <input type="search" name="SearchString" value="@ViewData["CurrentFilter"]" placeholder="Search here...">
+                        <input type="submit" value="Search" class="submit-search">
+                    </form>
+                </div>
 
-        <div class="user-wrapper">
-          <img src="~/image/imageDesktop.jpg" width="40px" height="40px" alt="" />
-          <div>
-            <h4>SMD Team 1</h4>
-            <small>Super admin</small>
-          </div>
-        </div>
-        </div>
-      </header>
-      <!-- End header -->
-
-      <!-- Main section -->
-      <main>
+                <div class="user-wrapper">
+                    <img src="~/image/imageDesktop.jpg" width="40px" height="40px" alt="" />
+                    <div>
+                        <h4>@UserManager.GetUserName(User)!</h4>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- End header -->
+        <!-- Main section -->
+        <main>
             <div>
-                 @RenderBody()
-             </div>
-      </main>
-      <!-- End main -->
+                @RenderBody()
+            </div>
+        </main>
+        <!-- End main -->
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
         @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>
