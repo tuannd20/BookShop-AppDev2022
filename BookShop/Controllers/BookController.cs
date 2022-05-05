@@ -42,10 +42,13 @@ namespace BookShop.Controllers
             var books = from s in _context.Books
                            select s;
             books = books.Include(s => s.Store).ThenInclude(u => u.User)
+                .Where(u => u.Store.User.Id == userid);
+            if (searchString != null)
+            {
+                books = books.Include(s => s.Store).ThenInclude(u => u.User)
                 .Where(u => u.Store.User.Id == userid)
                 .Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
-            /*            students = students.Where(s => s.LastName);
-            */
+            }
             int numOfFilteredStudent = books.Count();
             ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredStudent / rowsonepage);
             ViewBag.CurrentPage = id;
@@ -119,9 +122,7 @@ namespace BookShop.Controllers
             var userid = _userManager.GetUserId(HttpContext.User);
 
 
-            ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;
-
-            
+            ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;        
             return View();
         }   
         public async Task<IActionResult> RecordOrder()
@@ -137,6 +138,10 @@ namespace BookShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Isbn,StoreId,Category,Title,Pages,Author,Price,Desc,ImgUrl")] Book book, IFormFile image)
         {
+            var userid = _userManager.GetUserId(HttpContext.User);
+
+
+            ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;
 
             try
             {
@@ -164,7 +169,6 @@ namespace BookShop.Controllers
              
             }
            
-            ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Id", book.StoreId);
             return View(book);
         }
 

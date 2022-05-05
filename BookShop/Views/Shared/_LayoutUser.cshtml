@@ -42,18 +42,13 @@
 				<div class="login-dropdow">
 					<a class="fas fa-user"></a>
 					<div class="login-dropdow-content">
-<<<<<<< HEAD
-						<a class="login-dropdow-content-title" asp-area="Identity" asp-page="/Account/Manage/Index">@UserManager.GetUserName(User)!</a>
-						<a class="login-dropdow-content-title" asp-controller="Home" asp-action="Profile">Profile</a>
-=======
 						<a class="login-dropdow-content-title" asp-controller="home" asp-action="profile">@UserManager.GetUserName(User)!</a>
->>>>>>> dev
-						@*<a class="login-dropdow-content-title" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Logout</a>*@
-						<div class="aligns-items-center justify-content-center">
+						<a class="login-dropdow-content-title" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Logout</a>
+					@*	<div class="aligns-items-center justify-content-center">
 							<form class="login-dropdow-content-title aligns-items-center justify-content-center" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
 								<input type="submit" class="login-dropdow-content-title text-center" value="Logout"/>
 							</form>
-						</div>
+						</div>*@
 					</div>
 				</div>
 			}
