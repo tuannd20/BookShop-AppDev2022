@@ -2,12 +2,10 @@
 
 @{
     ViewData["Title"] = "Details";
-}
-
-<h1>Details</h1>
+    Layout = "~/Views/Shared/_LayoutSeller.cshtml";
+}}
 
 <div>
-    <h4>Book</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -68,3 +66,8 @@
     <a asp-action="Edit" asp-route-id="@Model?.Isbn">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}

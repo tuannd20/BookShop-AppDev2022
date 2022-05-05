@@ -26,6 +26,7 @@ namespace BookShop.Controllers
         {
             return View("Views/Store/Index.cshtml");
         }
+        [Authorize(Roles = "Seller")]
 
         public IActionResult Register()
         {

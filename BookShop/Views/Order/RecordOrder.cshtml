@@ -1,26 +1,30 @@
-﻿@model IEnumerable<BookShop.Models.OrderDetail>
+﻿@model IEnumerable<BookShop.Models.Store>
 
 @{
     ViewData["Title"] = "RecordOrder";
+    Layout = "~/Views/Shared/_LayoutSeller.cshtml";
 }
 
 <h1>RecordOrder</h1>
-<table class="table">
-  <thead>
+<table class="table ">
+<thead class=".table-dark mx-auto">
     <tr>
-      <th scope="col">#</th>
       <th scope="col">User</th>
       <th scope="col">Order Date</th>
       <th scope="col">Details</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
+
+      @foreach (var item in Model)
+      {
+      <tr>
+      <td> @item.UserId   </td>
+      <td>@item.Name</td>
       <td> <a asp-action="Details" asp-route-id=" ">Details</a> </td>
     </tr>
+      }
+   
 
   </tbody>
 </table>
