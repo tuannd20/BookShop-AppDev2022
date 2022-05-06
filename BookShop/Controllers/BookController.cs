@@ -95,6 +95,7 @@ namespace BookShop.Controllers
                 .FirstOrDefaultAsync(m => m.Isbn == Isbn);
             return View("Views/Book/BookDetails.cshtml", book);
         }
+        [Authorize(Roles = "Seller")]
 
         // GET: Book/Details/5
         public async Task<IActionResult> Details(string id)
@@ -115,9 +116,10 @@ namespace BookShop.Controllers
             return View(book);
         }
 
-      
 
-        // GET: Book/Create
+
+        [Authorize(Roles = "Seller")]
+
         public async Task<IActionResult> Create()
         {
             var userid = _userManager.GetUserId(HttpContext.User);
@@ -126,42 +128,45 @@ namespace BookShop.Controllers
             ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;        
             return View();
         }   
-        public async Task<IActionResult> RecordOrder()
-        {
-          
-            return View();
-        }
 
         // POST: Book/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Seller")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Isbn,StoreId,Category,Title,Pages,Author,Price,Desc,ImgUrl")] Book book, IFormFile image)
+        public async Task<IActionResult> Create([Bind("Isbn,StoreId,Category,Title,Pages,Author,Price,Desc")] Book book, IFormFile image)
         {
             var userid = _userManager.GetUserId(HttpContext.User);
-
-
             ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;
 
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var userid1 = _userManager.GetUserId(HttpContext.User);
-                    string imgName = book.Isbn + Path.GetExtension(image.FileName);
-                    string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
-                    using (var stream = new FileStream(savePath, FileMode.Create))
+                    if (image == null)
                     {
-                        image.CopyTo(stream);
-                    }
-                    book.ImgUrl = imgName;
+                        book.ImgUrl = "defaut.jpg";
 
-                    Store thisStore = _context.Stores.Where(s => s.UserId == userid1).FirstOrDefault();
+                    }
+                    else
+                    {
+                        string imgName = book.Isbn + Path.GetExtension(image.FileName);
+                        string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
+                        using (var stream = new FileStream(savePath, FileMode.Create))
+                        {
+                            image.CopyTo(stream);
+                        }
+                        book.ImgUrl = imgName;
+
+                       
+                    }
+                    Store thisStore = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault();
                     book.StoreId = thisStore.Id;
                     _context.Add(book);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
+
                 }
             }
             catch (DbUpdateException)
@@ -173,7 +178,7 @@ namespace BookShop.Controllers
             return View(book);
         }
 
-        // GET: Book/Edit/5
+        [Authorize(Roles = "Seller")]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -237,11 +242,10 @@ namespace BookShop.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Id", book.StoreId);
             return View(book);
         }
 
-        // GET: Book/Delete/5
+        [Authorize(Roles = "Seller")]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)

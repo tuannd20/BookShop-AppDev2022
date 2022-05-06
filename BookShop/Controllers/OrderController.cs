@@ -94,7 +94,15 @@ namespace BookShop.Controllers
 
         }
 
+        public async Task<IActionResult> RecordOrder()
+        {
+            var userid = _userManager.GetUserId(HttpContext.User);
+            var recordOrder = await _context.Books.Include(o => o.OrderDetails).ThenInclude(od => od.Order)
+                           .Where(od => od.Store.UserId == userid).ToListAsync();
 
+
+            return View(recordOrder);
+        }
         private bool OrderExists(int id)
         {
             return _context.Orders.Any(e => e.Id == id);

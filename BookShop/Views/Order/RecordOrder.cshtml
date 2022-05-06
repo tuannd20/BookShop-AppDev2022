@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BookShop.Models.OrderDetail>
+﻿@model IEnumerable<BookShop.Models.Store>
 
 @{
     ViewData["Title"] = "RecordOrder";
@@ -6,8 +6,8 @@
 }
 
 <h1>RecordOrder</h1>
-<table class="table">
-  <thead>
+<table class="table ">
+<thead class=".table-dark mx-auto">
     <tr>
       <th scope="col">User</th>
       <th scope="col">Order Date</th>
@@ -15,11 +15,16 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>Mark</td>
-      <td>Otto</td>
+
+      @foreach (var item in Model)
+      {
+      <tr>
+      <td> @item.UserId   </td>
+      <td>@item.Name</td>
       <td> <a asp-action="Details" asp-route-id=" ">Details</a> </td>
     </tr>
+      }
+   
 
   </tbody>
 </table>
