@@ -38,28 +38,36 @@ namespace BookShop.Controllers
         }
         public async Task<IActionResult> Index(int id = 0, string searchString = "")
         {
+            var userid = _userManager.GetUserId(HttpContext.User);
             ViewData["CurrentFilter"] = searchString;
             var books = from s in _context.Books
                         select s;
-            if (searchString != null)
-            {
-                books = books.Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
-                /*            students = students.Where(s => s.LastName);
-                */
-            }
-            int numOfFilteredBook = books.Count();
-            ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredBook / rowsonepage);
             ViewBag.CurrentPage = id;
-            List<Book> booklist = await books.Skip(id * rowsonepage)
-                .Take(rowsonepage).ToListAsync();
-            if (id > 0)
-            {
-                ViewBag.idpagprev = id - 1;
-            }
-            ViewBag.idpagenext = id + 1;
-            ViewBag.currentPage = id;
-            return View(booklist);
-           
+
+            books = books.Include(s => s.Store).ThenInclude(u => u.User)
+                         .Where(u => u.Store.User.Id == userid)
+                         .Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
+
+            List<Book> studentsList = await books.Skip(id * rowsonepage)
+               .Take(rowsonepage).ToListAsync();
+
+            int numOfFilteredStudent = books.Count();
+
+            ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredStudent / rowsonepage);
+
+            return View(studentsList);
+
+
+
+
+            /*  if (id > 0)
+              {
+                  ViewBag.idpagprev = id - 1;
+              }
+              ViewBag.idpagenext = id + 1;
+              ViewBag.currentPage = id;*/
+
+
         }
 
         [Authorize(Roles = "Seller")]

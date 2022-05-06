@@ -41,25 +41,26 @@ namespace BookShop.Controllers
             ViewData["CurrentFilter"] = searchString;
             var books = from s in _context.Books
                            select s;
-            books = books.Include(s => s.Store).ThenInclude(u => u.User)
-                .Where(u => u.Store.User.Id == userid);
-            if (searchString != null)
-            {
-                books = books.Include(s => s.Store).ThenInclude(u => u.User)
-                .Where(u => u.Store.User.Id == userid)
-                .Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
-            }
-            int numOfFilteredStudent = books.Count();
-            ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredStudent / rowsonepage);
             ViewBag.CurrentPage = id;
+
+            books = books.Include(s => s.Store).ThenInclude(u => u.User)
+                         .Where(u => u.Store.User.Id == userid)
+                         .Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
+
             List<Book> studentsList = await books.Skip(id * rowsonepage)
-                .Take(rowsonepage).ToListAsync();
-            if (id > 0)
+               .Take(rowsonepage).ToListAsync();
+
+            int numOfFilteredStudent = books.Count();
+
+            ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredStudent / rowsonepage);
+           
+           
+           /* if (id > 0)
             {
                 ViewBag.idpagprev = id - 1;
             }
             ViewBag.idpagenext = id + 1;
-            ViewBag.currentPage = id;
+            ViewBag.currentPage = id;*/
             return View(studentsList);
         }
 
@@ -74,7 +75,7 @@ namespace BookShop.Controllers
                 /*            students = students.Where(s => s.LastName);
                 */
             }
-            int numOfFilteredBook = books.Count();
+            /*int numOfFilteredBook = books.Count();
             ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredBook / rowsonepage);
             ViewBag.CurrentPage = id;
             List<Book> booklist = await books.Skip(id * rowsonepage)
@@ -84,8 +85,8 @@ namespace BookShop.Controllers
                 ViewBag.idpagprev = id - 1;
             }
             ViewBag.idpagenext = id + 1;
-            ViewBag.currentPage = id;
-            return View("Views/Book/Search.cshtml", booklist);
+            ViewBag.currentPage = id;*/
+            return View("Views/Book/Search.cshtml");
         }
 
         public async Task<IActionResult> DisplayBook(string Isbn)
