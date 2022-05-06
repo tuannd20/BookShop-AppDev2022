@@ -39,7 +39,7 @@ namespace BookShop.Controllers
         {
             var userid = _userManager.GetUserId(HttpContext.User);
             var storeid = _context.Stores.FirstOrDefault(s => s.UserId == userid);
-            if(storeid == null)
+            if (storeid == null)
             {
                 TempData["msg"] = "<script>alert('You are seller. Can't get in here.');</script>";
                 return RedirectToAction("Register", "Store");
@@ -130,9 +130,9 @@ namespace BookShop.Controllers
             var userid = _userManager.GetUserId(HttpContext.User);
 
 
-            ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;        
+            ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;
             return View();
-        }   
+        }
 
         // POST: Book/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -147,40 +147,35 @@ namespace BookShop.Controllers
 
             try
             {
-                if (ModelState.IsValid)
+                if (image == null)
                 {
-                    if (image == null)
+                    book.ImgUrl = "defaut.jpg";
+                }
+                else
+                {
+                    string imgName = book.Isbn + Path.GetExtension(image.FileName);
+                    string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
+                    using (var stream = new FileStream(savePath, FileMode.Create))
                     {
-                        book.ImgUrl = "defaut.jpg";
-
+                        image.CopyTo(stream);
                     }
-                    else
-                    {
-                        string imgName = book.Isbn + Path.GetExtension(image.FileName);
-                        string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
-                        using (var stream = new FileStream(savePath, FileMode.Create))
-                        {
-                            image.CopyTo(stream);
-                        }
-                        book.ImgUrl = imgName;
+                    book.ImgUrl = imgName;
 
-                       
-                    }
-                    Store thisStore = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault();
-                    book.StoreId = thisStore.Id;
-                    _context.Add(book);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
 
                 }
+                Store thisStore = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault();
+                book.StoreId = thisStore.Id;
+                _context.Add(book);
+                await _context.SaveChangesAsync();
+                return View(book);
+
             }
             catch (DbUpdateException)
             {
-                TempData["msg"] = "<script>alert('You are seller. Can't get in here.');</script>";
-             
+                TempData["msg"] = "<script>alert('You already add this to cart');</script>";
+                return RedirectToAction("Create");
+
             }
-           
-            return View(book);
         }
 
         [Authorize(Roles = "Seller")]
@@ -205,14 +200,13 @@ namespace BookShop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Isbn,StoreId,Title,Pages,Author,Category,Price,Desc,ImgUrl")] Book book, IFormFile image)
+        public async Task<IActionResult> Edit([Bind("Isbn,StoreId,Title,Pages,Author,Category,Price,Desc")] Book book, IFormFile image)
         {
-            if (ModelState.IsValid)
-            {
+           
                 try
                 {
-                    
-                    if(image == null)
+
+                    if (image == null)
                     {
                         Book thisProduct = _context.Books.Where(p => p.Isbn == book.Isbn).AsNoTracking().FirstOrDefault();
                         book.ImgUrl = thisProduct.ImgUrl;
@@ -246,8 +240,7 @@ namespace BookShop.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            return View(book);
+          
         }
 
         [Authorize(Roles = "Seller")]

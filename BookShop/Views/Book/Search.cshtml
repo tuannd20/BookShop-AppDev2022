@@ -26,7 +26,7 @@
 						<div class="card-body fs-3">
 							<h3 class="card-title fs-2 text-dark">@Html.DisplayFor(modelItem => item.Title)</h3>
 							<h5 class="card-title fs-3 text-dark">@Html.DisplayFor(modelItem => item.Category)</h5>
-							<p class="card-text text-dark" style="text-align: justify;">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+							<div class = "product-description"> <p class="card-text text-dark " style="text-align: justify;">@Html.DisplayFor(modelItem => item.Desc)</p> </div>
 							<p class="card-text text-dark"> @Html.DisplayFor(modelItem => item.Store.Id)</p>
 							<div class="d-flex justify-content-between">
 								<p class="card-text text-dark"><small class="text-muted">Price: @Html.DisplayFor(modelItem => item.Price)</small></p>

@@ -180,18 +180,13 @@
         <div class="swiper-wrapper">
             @foreach (var book in Model)
             {
+
                 <div class="swiper-slide box">
                     <div class="icons">
 
-                        <a class="fas fa-search"></a>
+                        <a href ="#search-form" class="fas fa-search"></a>
                         <a class="fas fa-heart"></a>
-                        <a class="fas fa-eye"
-                       data-title="@book.Title"
-                       data-price="@book.Price"
-                       data-description="@book.Desc"
-                       data-category="@book.Category"
-                       data-url="@book.ImgUrl"
-                       data-isbn="@book.Isbn"></a>
+                        <a class="fas fa-eye" asp-controller="Book" asp-action="DisplayBook" asp-route-isbn = "@book.Isbn" ></a>
                     </div>
                     <div class="image">
                         <img src="~/img/@book.ImgUrl" alt="">

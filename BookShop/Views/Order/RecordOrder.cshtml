@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BookShop.Models.Store>
+﻿@model IEnumerable<BookShop.Models.Book>
 
 @{
     ViewData["Title"] = "RecordOrder";
@@ -16,14 +16,13 @@
   </thead>
   <tbody>
 
-      @foreach (var item in Model)
-      {
+      
       <tr>
-      <td> @item.UserId   </td>
-      <td>@item.Name</td>
+      <td>  vccb</td>
+      <td>Nam</td>
       <td> <a asp-action="Details" asp-route-id=" ">Details</a> </td>
     </tr>
-      }
+      
    
 
   </tbody>

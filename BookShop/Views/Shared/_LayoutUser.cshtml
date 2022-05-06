@@ -28,7 +28,7 @@
 	<div class="header-1">
 		<a asp-controller="home" asp-action="Index" class="logo"> <i class="fas fa-book"></i> bookly </a>
 
-		<form asp-controller="Book" asp-action="SearchBook" method="get" class="search-form">
+		<form asp-controller="Book" asp-action="SearchBook" method="get" id ="search-form" class="search-form">
 			<input type="search" name="SearchString" value="@ViewData["CurrentFilter"]" placeholder="Search here..." id="search-box">
 			<input type="submit" value="Search" class="submit-search">
 		</form>
