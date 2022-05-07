@@ -7,6 +7,7 @@ namespace BookShop.Models
         public int OrderId { get; set; }
         public string BookIsbn { get; set; }
         public int Quantity { get; set; }
+
         [ValidateNever]
 
         public Order Order { get; set; }

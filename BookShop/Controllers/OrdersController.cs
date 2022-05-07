@@ -11,23 +11,23 @@ using BookShop.Models;
 
 namespace BookShop.Controllers
 {
-    public class StoreController : Controller
+    public class OrdersController : Controller
     {
         private readonly BookShopContext _context;
 
-        public StoreController(BookShopContext context)
+        public OrdersController(BookShopContext context)
         {
             _context = context;
         }
 
-        // GET: Store
+        // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var bookShopContext = _context.Stores.Include(s => s.User);
+            var bookShopContext = _context.Orders.Include(o => o.User);
             return View(await bookShopContext.ToListAsync());
         }
 
-        // GET: Store/Details/5
+        // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,42 +35,44 @@ namespace BookShop.Controllers
                 return NotFound();
             }
 
-            var store = await _context.Stores
-                .Include(s => s.User)
+            var order = await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Book)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (store == null)
+            if (order == null)
             {
                 return NotFound();
             }
 
-            return View(store);
+            return View(order);
         }
 
-        // GET: Store/Create
+        // GET: Orders/Create
         public IActionResult Create()
         {
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: Store/Create
+        // POST: Orders/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Name,Address,Slogan")] Store store)
+        public async Task<IActionResult> Create([Bind("Id,UserId,OrderDate,Total")] Order order)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(store);
+                _context.Add(order);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", store.UserId);
-            return View(store);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+            return View("Views/Orders/Index.cshtml");
         }
 
-        // GET: Store/Edit/5
+        // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,23 +80,23 @@ namespace BookShop.Controllers
                 return NotFound();
             }
 
-            var store = await _context.Stores.FindAsync(id);
-            if (store == null)
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", store.UserId);
-            return View(store);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+            return View(order);
         }
 
-        // POST: Store/Edit/5
+        // POST: Orders/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Name,Address,Slogan")] Store store)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,OrderDate,Total")] Order order)
         {
-            if (id != store.Id)
+            if (id != order.Id)
             {
                 return NotFound();
             }
@@ -103,12 +105,12 @@ namespace BookShop.Controllers
             {
                 try
                 {
-                    _context.Update(store);
+                    _context.Update(order);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StoreExists(store.Id))
+                    if (!OrderExists(order.Id))
                     {
                         return NotFound();
                     }
@@ -119,11 +121,11 @@ namespace BookShop.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", store.UserId);
-            return View(store);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+            return View(order);
         }
 
-        // GET: Store/Delete/5
+        // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -131,31 +133,31 @@ namespace BookShop.Controllers
                 return NotFound();
             }
 
-            var store = await _context.Stores
-                .Include(s => s.User)
+            var order = await _context.Orders
+                .Include(o => o.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (store == null)
+            if (order == null)
             {
                 return NotFound();
             }
 
-            return View(store);
+            return View(order);
         }
 
-        // POST: Store/Delete/5
+        // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var store = await _context.Stores.FindAsync(id);
-            _context.Stores.Remove(store);
+            var order = await _context.Orders.FindAsync(id);
+            _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StoreExists(int id)
+        private bool OrderExists(int id)
         {
-            return _context.Stores.Any(e => e.Id == id);
+            return _context.Orders.Any(e => e.Id == id);
         }
     }
 }

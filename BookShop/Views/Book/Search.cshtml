@@ -1,75 +1,90 @@
 ﻿@model IEnumerable<BookShop.Models.Book>
-@Html.Raw(TempData["msg"])
+@using Microsoft.AspNetCore.Identity
+@using BookShop.Areas.Identity.Data
+
+@inject SignInManager<BookShopUser> SignInManager
+@inject UserManager<BookShopUser> UserManager
+
 
 @{
-	ViewData["Title"] = "BookFPT";
-	Layout = "~/Views/Shared/_LayoutUser.cshtml";
+    ViewData["Title"] = "BookFPT";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
 }
+@Html.Raw(TempData["msg"])
 
 <div class="container">
-	<h2 class="mt-5 fs-1">Result for search</h2>
+    <h2 class="mt-5 fs-1">Result for search</h2>
 
-	<div class="mt-4">
-		<div class="col-3" style="">
-			<h1>Filter</h1>
-		</div>
-		@foreach (var item in Model)
-		{
-		<div class="row row-cols-1 row-cols-md-2 g-4 align-items-center justify-content-center">
-			<a class="" asp-action="DisplayBook" asp-route-isbn = "@item.Isbn">
-			<div class="col card mb-2 ms-5 w-75" style="width: 50%;">
-				<div class="g-0 d-flex flex-row">
-					<div class="col-3 align-items-center" style="width: 100%;">
-						<img src="@("~/img/" + item.ImgUrl)" asp-append-version = "true" class="img-thumbnail w-75" style="width: 100%!important; height:35vh!important;" alt="...">
-					</div>
-					<div class="col-9">
-						<div class="card-body fs-3">
-							<h3 class="card-title fs-2 text-dark">@Html.DisplayFor(modelItem => item.Title)</h3>
-							<h5 class="card-title fs-3 text-dark">@Html.DisplayFor(modelItem => item.Category)</h5>
-							<div class = "product-description"> <p class="card-text text-dark " style="text-align: justify;">@Html.DisplayFor(modelItem => item.Desc)</p> </div>
-							<p class="card-text text-dark"> @Html.DisplayFor(modelItem => item.Store.Id)</p>
-							<div class="d-flex justify-content-between">
-								<p class="card-text text-dark"><small class="text-muted">Price: @Html.DisplayFor(modelItem => item.Price)</small></p>
-								<div class="stars me-3">
-									<i class="fas fa-star" style="color: #F5BA3D;"></i>
-									<i class="fas fa-star" style="color: #F5BA3D;"></i>
-									<i class="fas fa-star" style="color: #F5BA3D;"></i>
-									<i class="fas fa-star" style="color: #F5BA3D;"></i>
-									<i class="fas fa-star-half-alt" style="color: #F5BA3D;"></i>
-								</div>
-							</div>
-							<div>
-								<a asp-controller="Cart" asp-action="AddToCart" asp-route-isbn = "@item.Isbn" class="btn btn-success fs-3">Add to cart</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			</a>
-		</div>
-		}
-	<nav aria-label="...">
-        <ul class="pagination justify-content-center">
-            <li class="page-item">
-                <a class="page-link" href="/Book/SearchBook/@ViewBag.idpagprev" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
+    <div class="mt-4">
+        <div class="col-3" style="">
+            <h1>Filter</h1>
+        </div>
+        @foreach (var item in Model)
+        {
+            <div class="row row-cols-1 row-cols-md-2 g-4 align-items-center justify-content-center">
+                <a class="" asp-action="DisplayBook" asp-route-isbn="@item.Isbn">
+                    <div class="col card mb-2 ms-5 w-75" style="width: 50%;">
+                        <div class="g-0 d-flex flex-row">
+                            <div class="col-3 align-items-center" style="width: 100%;">
+                                <img src="@("~/img/" + item.ImgUrl)" asp-append-version="true" class="img-thumbnail w-75" style="width: 100%!important; height:35vh!important;" alt="...">
+                            </div>
+                            <div class="col-9">
+                                <div class="card-body fs-3">
+                                    <h3 class="card-title fs-2 text-dark">@Html.DisplayFor(modelItem => item.Title)</h3>
+                                    <h5 class="card-title fs-3 text-dark">@Html.DisplayFor(modelItem => item.Category)</h5>
+                                    <div class="product-description"> <p class="card-text text-dark " style="text-align: justify;">@Html.DisplayFor(modelItem => item.Desc)</p> </div>
+                                    <p class="card-text text-dark"> @Html.DisplayFor(modelItem => item.Store.Id)</p>
+                                    <div class="d-flex justify-content-between">
+                                        <p class="card-text text-dark"><small class="text-muted">Price: @Html.DisplayFor(modelItem => item.Price)</small></p>
+                                        <div class="stars me-3">
+                                            <i class="fas fa-star" style="color: #F5BA3D;"></i>
+                                            <i class="fas fa-star" style="color: #F5BA3D;"></i>
+                                            <i class="fas fa-star" style="color: #F5BA3D;"></i>
+                                            <i class="fas fa-star" style="color: #F5BA3D;"></i>
+                                            <i class="fas fa-star-half-alt" style="color: #F5BA3D;"></i>
+                                        </div>
+                                    </div>
+                                    @if (SignInManager.IsSignedIn(User))
+                                    {
+                                        <div>
+                                            <a asp-controller="Cart" asp-action="AddToCart" asp-route-isbn="@item.Isbn" class="btn btn-success fs-3">Add to cart</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div>
+								            <a href="/Identity/Account/Login" class="btn btn-success fs-3">Add to cart</a>
+										</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </a>
-            </li>
-            @for (var i = 0; i < ViewBag.NumberOfPages; i++)
-            {
-                var style = (ViewBag.currentPage == @i) ? "active" : "";
-                <li class="page-item @style " aria-current="page">
-                    <a asp-action="SearchBook" asp-route-id="@(i)" asp-route-SearchString="@ViewData["CurrentFilter"]" class="page-link">@(i +1 ) </a>
+            </div>
+        }
+        <nav aria-label="...">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <a class="page-link" href="/Book/SearchBook/@ViewBag.idpagprev" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
                 </li>
+                @for (var i = 0; i < ViewBag.NumberOfPages; i++)
+                {
+                    var style = (ViewBag.currentPage == @i) ? "active" : "";
+                    <li class="page-item @style " aria-current="page">
+                        <a asp-action="SearchBook" asp-route-id="@(i)" asp-route-SearchString="@ViewData["CurrentFilter"]" class="page-link">@(i +1 ) </a>
+                    </li>
 
-            }
+                }
 
-            <li class="page-item">
-                <a class="page-link" href="/Book/SearchBook/@ViewBag.idpagenext" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-	</nav>
-	</div>
+                <li class="page-item">
+                    <a class="page-link" href="/Book/SearchBook/@ViewBag.idpagenext" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>

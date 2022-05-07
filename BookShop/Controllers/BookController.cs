@@ -42,7 +42,7 @@ namespace BookShop.Controllers
             if (storeid == null)
             {
                 TempData["msg"] = "<script>alert('You are seller. Can't get in here.');</script>";
-                return RedirectToAction("Register", "Store");
+                return RedirectToAction("Register", "Seller");
             }
             ViewData["CurrentFilter"] = searchString;
             var books = from s in _context.Books
@@ -167,8 +167,7 @@ namespace BookShop.Controllers
                 book.StoreId = thisStore.Id;
                 _context.Add(book);
                 await _context.SaveChangesAsync();
-                return View(book);
-
+                return RedirectToAction("Index");
             }
             catch (DbUpdateException)
             {
@@ -251,6 +250,7 @@ namespace BookShop.Controllers
                 return NotFound();
             }
 
+
             var book = await _context.Books
                 .Include(b => b.Store)
                 .FirstOrDefaultAsync(m => m.Isbn == id);
@@ -267,7 +267,19 @@ namespace BookShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+
+           
             var book = await _context.Books.FindAsync(id);
+            string imgName = book.ImgUrl;
+            string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
+
+            FileInfo file = new FileInfo(savePath);
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

@@ -5,7 +5,6 @@
     Layout = "~/Views/Shared/_LayoutSeller.cshtml";
 }
 @Html.Raw(TempData["msg"])
-
 <table class="table">
     <thead>
         <tr>
@@ -14,9 +13,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pages)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Author)
@@ -28,86 +24,67 @@
                 @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Desc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImgUrl)
-            </th>
-             <th>
                 Image
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Store)
+
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr><td>
-                @Html.DisplayFor(modelItem => item.Isbn)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pages)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td> 
-            <div class = "product-description">
-             <td>
-                @Html.DisplayFor(modelItem => item.Desc)
-            </td>
-            </div>
-       
-            <td>
-                @Html.DisplayFor(modelItem => item.ImgUrl)
-            </td>
-             <td>
-                 <div> 
-                     <img src = "@("~/img/" + item.ImgUrl)" asp-append-version = "true"  style= "max-width :60px"> 
-                 </div>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Store.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Isbn">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Isbn">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Isbn">Delete</a>
-            </td>
-        </tr>
-}
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Isbn)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    <div>
+                        <img src="@("~/img/" + item.ImgUrl)" asp-append-version="true" style="max-width :60px">
+                    </div>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Isbn" style="color: black"><ion-icon name="eye-outline"></ion-icon></a> 
+                    <a asp-action="Delete" class="mt-5" asp-route-id="@item.Isbn" style="color: black"><ion-icon name="trash-bin-outline"></ion-icon></a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
 <nav aria-label="...">
-  <ul class="pagination justify-content-center">
-    <li class="page-item">
-      <a class="page-link" href="/Students/Index/@ViewBag.idpagprev" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-    @for (var i = 0; i < ViewBag.NumberOfPages ; i++)
-    {       var style = (ViewBag.currentPage == @i) ? "active" : "";
-            <li class="page-item @style " aria-current="page"  >
-                <a asp-action="Index" asp-route-id="@(i)" asp-route-SearchString="@ViewData["CurrentFilter"]" class="page-link" >@(i +1 ) </a>
-                </li>
+    <ul class="pagination justify-content-center">
+        <li class="page-item">
+            <a class="page-link" href="/Students/Index/@ViewBag.idpagprev" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        @for (var i = 0; i < ViewBag.NumberOfPages; i++)
+        {
+            var style = (ViewBag.currentPage == @i) ? "active" : "";
+            <li class="page-item @style " aria-current="page">
+                <a asp-action="Index" asp-route-id="@(i)" asp-route-SearchString="@ViewData["CurrentFilter"]" class="page-link">@(i +1 ) </a>
+            </li>
 
-    }
+        }
 
-    <li class="page-item">
-      <a class="page-link" href="/Students/Index/@ViewBag.idpagenext" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  </ul>
+        <li class="page-item">
+            <a class="page-link" href="/Students/Index/@ViewBag.idpagenext" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
 </nav>

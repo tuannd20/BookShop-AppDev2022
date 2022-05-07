@@ -34,17 +34,17 @@
                         </tr>
                     </thead>
                     <tbody class="aligns-items-center justify-content-center">
+                        <form asp-controller="Orders" asp-action="Create">
                         @foreach (var item in Model)
                         {
                             <tr>
-
                                 <td class="text-center align-middle">@item.Book.Title</td>
                                 <td class="text-center align-middle" style="width: 28%;">
                                     <img src="~/img/@item.Book.ImgUrl" class="img-thumbnail w-25" alt="...">
                                 </td>
                                 <td class="text-center align-middle" style="width: 10%;">
                                     <div class="col-sm">
-                                        <input type="number" name="@item.BookIsbn" value="@item.Quantity" class="fs-3 form-control text-center">
+                                        <input readonly type="number" name="@item.BookIsbn" value="@item.Quantity" class="fs-3 form-control text-center">
                                     </div>
                                 </td>
                                 <td class="text-center align-middle">$ @(item.Book.Price * item.Quantity) </td>
@@ -53,10 +53,14 @@
                                 </td>
                             </tr>
                         }
+                        </form>
                     </tbody>
                 </table>
+                 <div class="d-flex flex-row-reverse" style="margin-right: 4%;">
+                   <p> Total: @Model.Sum(c => c.Book.Price * c.Quantity)</p>
+                </div>
                 <div class="d-flex flex-row-reverse" style="margin-right: 4%;">
-                    <a  asp-controller="Order" asp-action="index" class="btn btn-success p-3 fs-3">Checkout</a>
+                    <a  asp-controller="Cart" asp-action="Checkout" class="btn btn-success p-3 fs-3">Checkout</a>
                 </div>
         </div>
     }
