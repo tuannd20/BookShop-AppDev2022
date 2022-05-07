@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<BookShopUser> SignInManager
 @inject UserManager<BookShopUser> UserManager
+@model IEnumerable<BookShop.Models.Order>
 
 @{
 	ViewData["Title"] = "Profile";
@@ -91,49 +92,80 @@
 					</form>
 				</div>
 			</div>
+			@if (User.IsInRole("Customer"))
+			{
 			<div class="tab-pane">
+				<h2>Customer</h2>
 				<div class="container mt-5 border border-dark w-100 p-3">
-            <form enctype="multipart/form-data" asp-controller="Order" asp-action="Checkout" method="post">
-                <table class="table table-hover fs-3 aligns-items-center justify-content-center">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="text-center">Title</th>
-                            <th scope="col" class="text-center">Image</th>
-                            <th scope="col" class="text-center">Quantity</th>
-                            <th scope="col" class="text-center">Price</th>
-                            <th scope="col" class="text-center">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody class="aligns-items-center justify-content-center">
-                            <tr>
-
-                                <td class="text-center align-middle">Title Book</td>
-                                <td class="text-center align-middle" style="width: 28%;">
-                                    <img src="https://product.hstatic.net/200000343865/product/1_192_40f2b09a42e24a7ea63eff87962e7a2e.jpg" class="img-thumbnail w-25" alt="...">
-                                </td>
-                                <td class="text-center align-middle" style="width: 10%;">
-                                    <div class="col-sm">
-                                        <input type="number" name="" value="2" class="fs-3 form-control text-center" readonly>
-                                    </div>
-                                </td>
-                                <td class="text-center align-middle">$ 1000 </td>
-								<td class="text-center align-middle">20/02/2001 </td>
-                               @* <td class="text-center align-middle">
-                                    <a asp-action= "Remove" asp-route-Isbn = "" class="btn btn-danger p-3 fs-3 fa-solid fa-trash-can"></a>
-                                </td>*@
-                            </tr>
-                    </tbody>
-                </table>
-                @*<div class="d-flex flex-row-reverse" style="margin-right: 4%;">
-                    <a class="btn btn-success p-3 fs-3">Checkout</a>
-                </div>*@
-            </form>
-        </div>
+						<table class="table table-hover fs-3 aligns-items-center justify-content-center">
+							<thead>
+								<tr>
+									<th scope="col" class="text-center">Code</th>
+									<th scope="col" class="text-center">Mail</th>
+									<th scope="col" class="text-center">Ordered Date</th>
+									<th scope="col" class="text-center">Total Price</th>
+									<th scope="col" class="text-center">Action</th>
+								</tr>
+							</thead>
+							<tbody class="aligns-items-center justify-content-center">
+								@foreach (var item in Model)
+								{
+									<tr>
+										<td class="text-center align-middle">@Html.DisplayFor(modelItem => item.Id)</td>
+										<td class="text-center align-middle">
+											@Html.DisplayFor(modelItem => item.User.UserName)
+										</td>
+										<td class="text-center align-middle" style="width: 28%;">
+											@Html.DisplayFor(modelItem => item.OrderDate)
+										</td>
+										<td class="text-center align-middle">
+											@Html.DisplayFor(modelItem => item.Total)
+										</td>
+										<td class="text-center align-middle">
+											 <a asp-controller="Orders" asp-action="Details" asp-route-id="@item.Id">Details</a>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+				</div>
 			</div>
+			} else {
 			<div class="tab-pane">
-				<h2>Ember</h2>
-				<p>Ember.js is a productive, battle-tested JavaScript framework for building modern web applications. It includes everything you need to build rich UIs that work on any device.</p>
+				<h2>Seller</h2>
+						<table class="table table-hover fs-3 aligns-items-center justify-content-center">
+							<thead>
+								<tr>
+									<th scope="col" class="text-center">Code</th>
+									<th scope="col" class="text-center">Mail</th>
+									<th scope="col" class="text-center">Ordered Date</th>
+									<th scope="col" class="text-center">Total Price</th>
+									<th scope="col" class="text-center">Action</th>
+								</tr>
+							</thead>
+							<tbody class="aligns-items-center justify-content-center">
+								@foreach (var item in Model)
+								{
+									<tr>
+										<td class="text-center align-middle">@Html.DisplayFor(modelItem => item.Id)</td>
+										<td class="text-center align-middle">
+											@Html.DisplayFor(modelItem => item.User.UserName)
+										</td>
+										<td class="text-center align-middle" style="width: 28%;">
+											@Html.DisplayFor(modelItem => item.OrderDate)
+										</td>
+										<td class="text-center align-middle">
+											@Html.DisplayFor(modelItem => item.Total)
+										</td>
+										<td class="text-center align-middle">
+											 <a asp-controller="Orders" asp-action="Details" asp-route-id="@item.Id">Details</a>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
 			</div>
+			}
 			<div class="tab-pane">
 				<h2>Vue.js</h2>
 				<p>Vue (pronounced /vjuː/, like view) is a progressive framework for building user interfaces. Unlike other monolithic frameworks, Vue is designed from the ground up to be incrementally adoptable. </p>

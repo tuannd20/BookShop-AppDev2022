@@ -4,6 +4,7 @@ using BookShop.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace BookShop.Controllers
@@ -13,6 +14,7 @@ namespace BookShop.Controllers
         private readonly ILogger<SellerController> _logger;
         private readonly UserManager<BookShopUser> _userManager;
         private BookShopContext _context;
+        private readonly int _recordsPerPage = 5;
 
         public SellerController(ILogger<SellerController> logger, UserManager<BookShopUser> userManager, BookShopContext context)
         {
@@ -24,7 +26,7 @@ namespace BookShop.Controllers
         [Authorize(Roles = "Seller")]
         public IActionResult Index()
         {
-            return View("Views/Store/Index.cshtml");
+            return RedirectToAction("Index", "Book");
         }
         [Authorize(Roles = "Seller")]
 
@@ -60,6 +62,20 @@ namespace BookShop.Controllers
                 return View("Views/Book/Index.cshtml");
             }
            
+        }
+
+        public async Task<IActionResult> Profile(int id = 0)
+        {
+            var userid = _userManager.GetUserId(HttpContext.User);
+       
+            var ordered = from b in _context.Orders select b;
+            
+            ordered = ordered.Include(u => u.User).Include(r => r.OrderDetails).ThenInclude(d => d.Book).ThenInclude(s => s.Store)
+                .Where(f => f.OrderDetails.Where(w => w.Book.Store.UserId == userid).Any());
+            List<Order> ordersList = await ordered.Skip( id * _recordsPerPage)
+                .Take( _recordsPerPage ).ToListAsync();
+               
+            return RedirectToAction("Index", "Orders", ordersList);
         }
     }
 }

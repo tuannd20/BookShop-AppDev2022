@@ -79,9 +79,11 @@ namespace BookShop.Controllers
         {
             return View();
         }
-         public IActionResult Profile()
+         public async Task<IActionResult> Profile()
         {
-            return View("Views/Home/Profile.cshtml");
+            var userid = _userManager.GetUserId(HttpContext.User);
+            var bookShopContext = _context.Orders.Include(o => o.User).Where(u => u.UserId == userid);
+            return View("Views/Home/Profile.cshtml", await bookShopContext.ToListAsync());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

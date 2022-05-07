@@ -14,7 +14,7 @@
 </div>
 @if (SignInManager.IsSignedIn(User))
 {
-	<form asp-controller="Store" asp-action="addStore" method="post">
+	<form asp-controller="Seller" asp-action="addStore" method="post">
 		<div class="container w-50">
 			<div class="mb-3 g-3">
 				<label for="exampleFormControlInput1" class="form-label" asp-for="UserId">UserID:</label>
