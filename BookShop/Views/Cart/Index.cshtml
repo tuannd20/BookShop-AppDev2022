@@ -1,88 +1,70 @@
-﻿@{
-	ViewData["Title"] = "Users Page";
-	Layout = "~/Views/Shared/_LayoutUser.cshtml";
+﻿@model IEnumerable<BookShop.Models.Cart>
+
+@{
+    ViewData["Title"] = "Users Page";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
 }
 
 
 <div class="container">
-	<h1 class="mt-4">Shopping Cart</h1>
+    <h1 class="mt-4">Shopping Cart</h1>
+    @if (Model?.Any() != true)
+    {
+        <div class="container mt-5 border border-dark w-100 p-3 aligns-items-center justify-content-center">
+            <div>
+                <img src="https://s.udemycdn.com/browse_components/flyout/empty-shopping-cart-v2.jpg" class="rounded mx-auto d-block" alt="...">
+            </div>
+            <p class="text-center fs-3">Your cart is empty. Keep shopping to find a book!</p>
+            <div class="d-flex aligns-items-center justify-content-center">
+                <a class="p-3 fs-3 btn btn-success" asp-controller="Home" asp-action="Index" role="button">Keep shopping</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container mt-5 border border-dark w-100 p-3">
+                <table class="table table-hover fs-3 aligns-items-center justify-content-center">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center">Title</th>
+                            <th scope="col" class="text-center">Image</th>
+                            <th scope="col" class="text-center">Quantity</th>
+                            <th scope="col" class="text-center">Price</th>
+                            <th scope="col" class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="aligns-items-center justify-content-center">
+                        <form asp-controller="Orders" asp-action="Create">
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center align-middle">@item.Book.Title</td>
+                                <td class="text-center align-middle" style="width: 28%;">
+                                    <img src="~/img/@item.Book.ImgUrl" class="img-thumbnail w-25" alt="...">
+                                </td>
+                                <td class="text-center align-middle" style="width: 10%;">
+                                    <div class="col-sm">
+                                        <input readonly type="number" name="@item.BookIsbn" value="@item.Quantity" class="fs-3 form-control text-center">
+                                    </div>
+                                </td>
+                                <td class="text-center align-middle">$ @(item.Book.Price * item.Quantity) </td>
+                                <td class="text-center align-middle">
+                                    <a asp-action= "Remove" asp-route-Isbn = "@item.BookIsbn" class="btn btn-danger p-3 fs-3 fa-solid fa-trash-can"></a>
+                                </td>
+                            </tr>
+                        }
+                        </form>
+                    </tbody>
+                </table>
+                 <div class="d-flex flex-row-reverse" style="margin-right: 4%;">
+                   <p> Total: @Model.Sum(c => c.Book.Price * c.Quantity)</p>
+                </div>
+                <div class="d-flex flex-row-reverse" style="margin-right: 4%;">
+                    <a  asp-controller="Cart" asp-action="Checkout" class="btn btn-success p-3 fs-3">Checkout</a>
+                </div>
+        </div>
+    }
 
-	<div class="container mt-5 border border-dark w-100 p-3 aligns-items-center justify-content-center">
-		<div>
-			<img src="https://s.udemycdn.com/browse_components/flyout/empty-shopping-cart-v2.jpg" class="rounded mx-auto d-block" alt="...">
-		</div>
-		<p class="text-center fs-3">Your cart is empty. Keep shopping to find a book!</p>
-		<div class="d-flex aligns-items-center justify-content-center">
-			<a class="p-3 fs-3 btn btn-success" asp-controller="Home" asp-action="Index" role="button">Keep shopping</a>
-		</div>
-	</div>
-
-	<div class="container mt-5 border border-dark w-100 p-3">
-
-		<table class="table table-hover fs-3 aligns-items-center justify-content-center">
-			<thead>
-				<tr>
-					<th scope="col" class="text-center">#</th>
-					<th scope="col" class="text-center">Title</th>
-					<th scope="col" class="text-center">Image</th>
-					<th scope="col" class="text-center">Quantity</th>
-					<th scope="col" class="text-center">Price</th>
-					<th scope="col" class="text-center">Action</th>
-				</tr>
-			</thead>
-			<tbody class="aligns-items-center justify-content-center">
-				<tr>
-					<th scope="row" class="text-center align-middle">1</th>
-					<td class="text-center align-middle">Book Title</td>
-					<td class="text-center align-middle" style="width: 28%;">
-						<img src="https://product.hstatic.net/200000343865/product/tham-tu-lung-danh-conan-tap-5-k75qr_3d090a61dd2444d98a451f168f5f3b62_master.jpg" class="img-thumbnail w-25" alt="...">
-					</td>
-					<td class="text-center align-middle" style="width: 8%;">
-						<div class="col-sm">
-							<input type="number" class="fs-3 form-control text-center">
-						</div>
-					</td>
-					<td class="text-center align-middle">100</td>
-					<td class="text-center align-middle">
-						<a class="btn btn-danger p-3 fs-3 fa-solid fa-trash-can"></a>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row" class="text-center align-middle">2</th>
-					<td class="text-center align-middle">Book Title</td>
-					<td class="text-center align-middle" style="width: 28%;">
-						<img src="https://cf.shopee.vn/file/e8f2c7d4ed79df516bb532285338fef2" class="img-thumbnail w-25" alt="...">
-					</td>
-					<td class="text-center align-middle">
-						<div class="col-sm">
-							<input type="number" class="fs-3 form-control text-center">
-						</div>
-					</td>
-					<td class="text-center align-middle">200</td>
-					<td class="text-center align-middle">
-						<a class="btn btn-danger p-3 fs-3 fa-solid fa-trash-can"></a>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row" class="text-center align-middle">3</th>
-					<td class="text-center align-middle">Book Title</td>
-					<td class="text-center align-middle" style="width: 28%;">
-						<img src="https://product.hstatic.net/200000343865/product/57_3_3970c042906743279a6cf272e2193d41_master.jpg" class="img-thumbnail w-25" alt="...">
-					</td>
-					<td class="text-center align-middle">
-						<div class="col-sm">
-							<input type="number" class="fs-3 form-control text-center">
-						</div>
-					</td>
-					<td class="text-center align-middle">300</td>
-					<td class="text-center align-middle">
-						<a class="btn btn-danger p-3 fs-3 fa-solid fa-trash-can"></a>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<div class="d-flex flex-row-reverse" style="margin-right: 4%;">
-			<a class="btn btn-success p-3 fs-3">Checkout</a>
-		</div>
-	</div>
 </div>
+
+

@@ -8,26 +8,42 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookShop.Data;
 using BookShop.Models;
+using Microsoft.AspNetCore.Identity;
+using BookShop.Areas.Identity.Data;
 
 namespace BookShop.Controllers
 {
-    public class OrderController : Controller
+    public class OrdersController : Controller
     {
         private readonly BookShopContext _context;
+        private readonly UserManager<BookShopUser> _userManager;
+        private readonly int _recordsPerPage = 5;
 
-        public OrderController(BookShopContext context)
+
+
+        public OrdersController(BookShopContext context, UserManager<BookShopUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
+
         }
 
-        // GET: Order
-        public async Task<IActionResult> Index()
+        // GET: Orders
+        public async Task<IActionResult> Index( int id = 0)
         {
-            var bookShopContext = _context.Orders.Include(o => o.User);
-            return View(await bookShopContext.ToListAsync());
+            var userid = _userManager.GetUserId(HttpContext.User);
+
+            var ordered = from b in _context.Orders select b;
+
+            ordered = ordered.Include(u => u.User).Include(r => r.OrderDetails).ThenInclude(d => d.Book).ThenInclude(s => s.Store)
+                .Where(f => f.OrderDetails.Where(w => w.Book.Store.UserId == userid).Any());
+            List<Order> ordersList = await ordered.Skip(id * _recordsPerPage)
+                .Take(_recordsPerPage).ToListAsync();
+
+            return View(ordersList);
         }
 
-        // GET: Order/Details/5
+        // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,6 +53,8 @@ namespace BookShop.Controllers
 
             var order = await _context.Orders
                 .Include(o => o.User)
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Book)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
@@ -46,14 +64,14 @@ namespace BookShop.Controllers
             return View(order);
         }
 
-        // GET: Order/Create
+        // GET: Orders/Create
         public IActionResult Create()
         {
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: Order/Create
+        // POST: Orders/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -67,10 +85,10 @@ namespace BookShop.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
-            return View(order);
+            return View("Views/Orders/Index.cshtml");
         }
 
-        // GET: Order/Edit/5
+        // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,7 +105,7 @@ namespace BookShop.Controllers
             return View(order);
         }
 
-        // POST: Order/Edit/5
+        // POST: Orders/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -123,7 +141,7 @@ namespace BookShop.Controllers
             return View(order);
         }
 
-        // GET: Order/Delete/5
+        // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -142,7 +160,7 @@ namespace BookShop.Controllers
             return View(order);
         }
 
-        // POST: Order/Delete/5
+        // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

@@ -9,23 +9,36 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookShop.Data;
 using BookShop.Models;
+using Microsoft.AspNetCore.Identity;
+using BookShop.Areas.Identity.Data;
 
 namespace BookShop.Controllers
 {
     public class OrderDetailController : Controller
     {
         private readonly BookShopContext _context;
+        private readonly UserManager<BookShopUser> _userManager;
 
-        public OrderDetailController(BookShopContext context)
+        public OrderDetailController(BookShopContext context, UserManager<BookShopUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: OrderDetail
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
-            var bookShopContext = _context.OrderDetails.Include(o => o.Book).Include(o => o.Order);
-            return View(await bookShopContext.ToListAsync());
+
+            var userid = _userManager.GetUserId(HttpContext.User);
+
+            var orderDetail = from b in _context.OrderDetails select b;
+
+            orderDetail = orderDetail.Include(u => u.Order).Include(b => b.Book)
+                .Where(f => f.OrderId == id);
+           /* List<Order> ordersList = await ordered.Skip(id * _recordsPerPage)
+                .Take(_recordsPerPage).ToListAsync();*/
+
+            return View(orderDetail);
         }
 
         // GET: OrderDetail/Details/5

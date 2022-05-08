@@ -1,0 +1,49 @@
+﻿@model BookShop.Models.Book
+@Html.Raw(TempData["msg"])
+
+@{
+	ViewData["Title"] = "Index";
+	Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+<div class="container">
+	<div class="card mb-3 mt-3 align-items-center justify-content-center" style="width: 86%; margin-left: 6%;">
+		<div class="row g-0">
+			<div class="col-md-4">
+				<img style="width: 300rem; hight: 500rem;" src="~/img/@Model.ImgUrl" class="img-fluid rounded-start" alt="...">
+			</div>
+			<div class="col-md-8">
+				<div class="card-body fs-3">
+					<h5 class="card-title fs-2">@Html.DisplayFor(model => model.Title)</h5>
+					<p class="card-text fs-4">@Html.DisplayFor(model => model.Desc)</p>
+					<div class="d-flex justify-content-between">
+						<p class="card-text text-dark"><small class="text-muted">Price: @Html.DisplayFor(model => model.Price)</small></p>
+						<div class="stars me-3">
+							<i class="fas fa-star" style="color: #F5BA3D;"></i>
+							<i class="fas fa-star" style="color: #F5BA3D;"></i>
+							<i class="fas fa-star" style="color: #F5BA3D;"></i>
+							<i class="fas fa-star" style="color: #F5BA3D;"></i>
+							<i class="fas fa-star-half-alt" style="color: #F5BA3D;"></i>
+						</div>
+					</div>
+					 <form  asp-controller="Cart" asp-action="AddToCart" method="get">
+					<div>
+						<div class="product-quantity">
+							<label class="title-bold">Quantity: </label>
+							<div class="input-group1">
+								<span id="down" class=" btn-input btn-input-down" onclick=" down('0')"><ion-icon name="remove-outline"></ion-icon></span>
+								<input type="text" name = "quantity" id="myNumber" class=" input-number" value="1" />
+								<span id="up" class=" btn-input" onclick="up('100')"><ion-icon name="add-outline"></ion-icon></span>
+							</div>
+						</div>
+						<input style= "display :none"  type="text" name="Isbn" value="@Model.Isbn" />
+						<input type="submit" value="Add to cart" class="btn btn-success fs-3" /> 
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+    <div>
+    </div>

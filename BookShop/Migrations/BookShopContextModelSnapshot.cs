@@ -111,13 +111,14 @@ namespace BookShop.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImgUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Pages")
                         .HasColumnType("int");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<int>("StoreId")
                         .HasColumnType("int");
@@ -140,6 +141,9 @@ namespace BookShop.Migrations
 
                     b.Property<string>("BookIsbn")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "BookIsbn");
 

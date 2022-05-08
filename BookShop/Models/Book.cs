@@ -6,17 +6,35 @@ namespace BookShop.Models
     public class Book
     {
         [Key]
-        public string Isbn { get; set; }
-        public int StoreId { get; set; }
-        public string Title { get; set; }
-        public int Pages { get; set; }
-        public string Author { get; set; }
-        public string Category { get; set; }
-        public double Price { get; set; }
-        public string Desc { get; set; }
-        public string? ImgUrl { get; set; }
-        [ValidateNever]
 
+        [Required(ErrorMessage = "Please enter Isbn")]
+        public string Isbn { get; set; }
+        [Required(ErrorMessage = "Please enter Store")]
+
+        public int StoreId { get; set; }
+        [Required(ErrorMessage = "Please enter Title")]
+
+        public string Title { get; set; }
+        [Required(ErrorMessage = "Please enterPages")]
+
+        public int Pages { get; set; }
+        [Required(ErrorMessage = "Please enter Author")]
+
+        public string Author { get; set; }
+        [Required(ErrorMessage = "Please enter Category")]
+
+        public string Category { get; set; }
+        [Required(ErrorMessage = "Please enter Price")]
+
+        public int Price { get; set; }
+        [Required(ErrorMessage = "Please enter Description")]
+
+        public string Desc { get; set; }
+        [Required(ErrorMessage = "Please enter Image url")]
+
+        public string? ImgUrl { get; set; }
+
+        [ValidateNever]
         public Store Store { get; set; }
         public virtual ICollection<OrderDetail>? OrderDetails { get; set; }
 

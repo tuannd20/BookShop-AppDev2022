@@ -47,8 +47,8 @@ namespace BookShop.Controllers
                 /*            students = students.Where(s => s.LastName);
                 */
             }
-            int numOfFilteredStudent = books.Count();
-            ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredStudent / rowsonepage);
+            int numOfFilteredBook = books.Count();
+            ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredBook / rowsonepage);
             ViewBag.CurrentPage = id;
             List<Book> booklist = await books.Skip(id * rowsonepage)
                 .Take(rowsonepage).ToListAsync();
@@ -79,26 +79,12 @@ namespace BookShop.Controllers
         {
             return View();
         }
-         public IActionResult Profile()
+         public async Task<IActionResult> Profile()
         {
-            return View();
+            var userid = _userManager.GetUserId(HttpContext.User);
+            var bookShopContext = _context.Orders.Include(o => o.User).Where(u => u.UserId == userid);
+            return View("Views/Home/Profile.cshtml", await bookShopContext.ToListAsync());
         }
-
-        public async Task<IActionResult> AddToCart(string isbn)
-        {
-            string thisUserId = _userManager.GetUserId(HttpContext.User);
-            Console.WriteLine(thisUserId);            
-            Cart myCart = new Cart() { UserId = thisUserId, BookIsbn = isbn };
-            Cart fromDb = _context.Carts.FirstOrDefault(c => c.UserId == thisUserId && c.BookIsbn == isbn);
-            //if not existing (or null), add it to cart. If already added to Cart before, ignore it.
-            if (fromDb == null)
-            {
-                _context.Add(myCart);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction("Index");
-        }
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

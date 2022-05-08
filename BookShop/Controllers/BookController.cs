@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BookShop.Areas.Identity.Data;
 using BookShop.Data;
 using BookShop.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -33,17 +34,27 @@ namespace BookShop.Controllers
         }
 
         // GET: Book
+        [Authorize(Roles = "Seller")]
         public async Task<IActionResult> Index(int id = 0, string searchString = "")
         {
             var userid = _userManager.GetUserId(HttpContext.User);
+            var storeid = _context.Stores.FirstOrDefault(s => s.UserId == userid);
+            if (storeid == null)
+            {
+                TempData["msg"] = "<script>alert('You are seller. Can't get in here.');</script>";
+                return RedirectToAction("Register", "Seller");
+            }
             ViewData["CurrentFilter"] = searchString;
             var books = from s in _context.Books
-                           select s;
+                        select s;
             books = books.Include(s => s.Store).ThenInclude(u => u.User)
+                .Where(u => u.Store.User.Id == userid);
+            if (searchString != null)
+            {
+                books = books.Include(s => s.Store).ThenInclude(u => u.User)
                 .Where(u => u.Store.User.Id == userid)
                 .Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
-            /*            students = students.Where(s => s.LastName);
-            */
+            }
             int numOfFilteredStudent = books.Count();
             ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredStudent / rowsonepage);
             ViewBag.CurrentPage = id;
@@ -58,6 +69,38 @@ namespace BookShop.Controllers
             return View(studentsList);
         }
 
+        public async Task<IActionResult> SearchBook(int id = 0, string searchString = "")
+        {
+            ViewData["CurrentFilter"] = searchString;
+            var books = from s in _context.Books
+                        select s;
+            if (searchString != null)
+            {
+                books = books.Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
+                /*            students = students.Where(s => s.LastName);
+                */
+            }
+            int numOfFilteredBook = books.Count();
+            ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredBook / rowsonepage);
+            ViewBag.CurrentPage = id;
+            List<Book> booklist = await books.Skip(id * rowsonepage)
+                .Take(rowsonepage).ToListAsync();
+            if (id > 0)
+            {
+                ViewBag.idpagprev = id - 1;
+            }
+            ViewBag.idpagenext = id + 1;
+            ViewBag.currentPage = id;
+            return View("Views/Book/Search.cshtml", booklist);
+        }
+
+        public async Task<IActionResult> DisplayBook(string Isbn)
+        {
+            var book = await _context.Books
+                .FirstOrDefaultAsync(m => m.Isbn == Isbn);
+            return View("Views/Book/BookDetails.cshtml", book);
+        }
+        [Authorize(Roles = "Seller")]
 
         // GET: Book/Details/5
         public async Task<IActionResult> Details(string id)
@@ -78,54 +121,63 @@ namespace BookShop.Controllers
             return View(book);
         }
 
-        // GET: Book/Create
+
+
+        [Authorize(Roles = "Seller")]
+
         public async Task<IActionResult> Create()
         {
             var userid = _userManager.GetUserId(HttpContext.User);
 
 
             ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;
-
-            
-            return View();
-        }   
-        public async Task<IActionResult> RecordOrder()
-        {
-          
             return View();
         }
 
         // POST: Book/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Seller")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Isbn,StoreId,Category,Title,Pages,Author,Price,Desc,ImgUrl")] Book book, IFormFile image)
+        public async Task<IActionResult> Create([Bind("Isbn,StoreId,Category,Title,Pages,Author,Price,Desc")] Book book, IFormFile image)
         {
-           
+            var userid = _userManager.GetUserId(HttpContext.User);
+            ViewData["StoreId"] = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault().Name;
 
-            if (ModelState.IsValid)
+            try
             {
-                var userid1 = _userManager.GetUserId(HttpContext.User);
-                string imgName = book.Isbn + Path.GetExtension(image.FileName);
-                string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
-                using(var stream = new FileStream(savePath, FileMode.Create))
+                if (image == null)
                 {
-                    image.CopyTo(stream);
+                    book.ImgUrl = "defaut.jpg";
                 }
-                book.ImgUrl = imgName;
+                else
+                {
+                    string imgName = book.Isbn + Path.GetExtension(image.FileName);
+                    string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
+                    using (var stream = new FileStream(savePath, FileMode.Create))
+                    {
+                        image.CopyTo(stream);
+                    }
+                    book.ImgUrl = imgName;
 
-                Store thisStore = _context.Stores.Where(s => s.UserId == userid1).FirstOrDefault();
+
+                }
+                Store thisStore = _context.Stores.Where(s => s.UserId == userid).FirstOrDefault();
                 book.StoreId = thisStore.Id;
                 _context.Add(book);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
-            ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Id", book.StoreId);
-            return View(book);
+            catch (DbUpdateException)
+            {
+                TempData["msg"] = "<script>alert('You already add this to cart');</script>";
+                return RedirectToAction("Create");
+
+            }
         }
 
-        // GET: Book/Edit/5
+        [Authorize(Roles = "Seller")]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -147,14 +199,13 @@ namespace BookShop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Isbn,StoreId,Title,Pages,Author,Category,Price,Desc,ImgUrl")] Book book, IFormFile image)
+        public async Task<IActionResult> Edit([Bind("Isbn,StoreId,Title,Pages,Author,Category,Price,Desc")] Book book, IFormFile image)
         {
-            if (ModelState.IsValid)
-            {
+           
                 try
                 {
-                    
-                    if(image == null)
+
+                    if (image == null)
                     {
                         Book thisProduct = _context.Books.Where(p => p.Isbn == book.Isbn).AsNoTracking().FirstOrDefault();
                         book.ImgUrl = thisProduct.ImgUrl;
@@ -188,18 +239,17 @@ namespace BookShop.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Id", book.StoreId);
-            return View(book);
+          
         }
 
-        // GET: Book/Delete/5
+        [Authorize(Roles = "Seller")]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
+
 
             var book = await _context.Books
                 .Include(b => b.Store)
@@ -217,7 +267,19 @@ namespace BookShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+
+           
             var book = await _context.Books.FindAsync(id);
+            string imgName = book.ImgUrl;
+            string savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", imgName);
+
+            FileInfo file = new FileInfo(savePath);
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

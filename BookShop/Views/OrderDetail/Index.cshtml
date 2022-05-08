@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutSeller.cshtml";     
+
 }
 
 <h1>Index</h1>
@@ -34,7 +36,7 @@
                 @Html.DisplayFor(modelItem => item.Order.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Book.Isbn)
+                @Html.DisplayFor(modelItem => item.Book.Title)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |

@@ -8,23 +8,33 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookShop.Data;
 using BookShop.Models;
+using BookShop.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace BookShop.Controllers
 {
     public class CartController : Controller
     {
         private readonly BookShopContext _context;
+        private readonly UserManager<BookShopUser> _userManager;
 
-        public CartController(BookShopContext context)
+        public CartController(BookShopContext context, UserManager<BookShopUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
+
         }
 
         // GET: Cart
         public async Task<IActionResult> Index()
         {
-           /* var bookShopContext = _context.Carts.Include(c => c.Book).Include(c => c.User);*/
-            return View("Views/Cart/Index.cshtml");
+            var userid = _userManager.GetUserId(HttpContext.User);
+
+            var bookShopContext = _context.Carts.Include(c => c.Book)
+                                                .Include(c => c.User)
+                                                .Where(u => u.UserId == userid);
+
+            return View(await bookShopContext.ToListAsync());
         }
 
         // GET: Cart/Details/5
@@ -128,35 +138,107 @@ namespace BookShop.Controllers
             return View(cart);
         }
 
-        // GET: Cart/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Remove(string cartId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var userid = _userManager.GetUserId(HttpContext.User);
 
-            var cart = await _context.Carts
-                .Include(c => c.Book)
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (cart == null)
-            {
-                return NotFound();
-            }
-
-            return View(cart);
-        }
-
-        // POST: Cart/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var cart = await _context.Carts.FindAsync(id);
+            var cart = _context.Carts.Where(s => s.UserId == userid).FirstOrDefault();
             _context.Carts.Remove(cart);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> AddToCart(int? quantity , string isbn)
+        {
+            try
+            {
+
+                var thisUserId = _userManager.GetUserId(HttpContext.User);
+                if(thisUserId == null)
+                {
+                    return RedirectToAction("Login", "Identity");
+                }
+                Store thisStore = _context.Stores.FirstOrDefault(s => s.UserId == thisUserId);
+                if (quantity == null)
+                {
+                    quantity = 1;
+                }
+                if (thisStore != null)
+                {
+                    TempData["msg"] = "<script>alert('You are seller. Can't get in here.');</script>";
+                    return RedirectToAction("Index");
+
+                }
+                else
+                {
+                    Cart myCart = new Cart() { UserId = thisUserId, BookIsbn = isbn, Quantity = quantity };
+                    Cart fromDb = _context.Carts.FirstOrDefault(c => c.UserId == thisUserId && c.BookIsbn == isbn);
+                    //if not existing (or null), add it to cart. If already added to Cart before, ignore it.
+                    if (fromDb == null)
+                    {
+                        _context.Add(myCart);
+                        await _context.SaveChangesAsync();
+
+                    }
+                    return RedirectToAction("Index");
+
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                TempData["msg"] = "<script>alert('You are seller. Can't get in here.');</script>";
+                return RedirectToAction("SearchBook", "Book");
+            }
+          
+        }
+
+        public async Task<IActionResult> Checkout()
+        {
+            string thisUserId = _userManager.GetUserId(HttpContext.User);
+            List<Cart> myDetailsInCart = await _context.Carts
+                .Where(c => c.UserId == thisUserId)
+                .Include(c => c.Book)
+                .ToListAsync();
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    //Step 1: create an order
+                    Order myOrder = new Order();
+                    myOrder.UserId = thisUserId;
+                    myOrder.OrderDate = DateTime.Now;
+                    myOrder.Total = myDetailsInCart.Select(c => c.Book.Price)
+                        .Aggregate((c1, c2) => c1 + c2);
+                    _context.Add(myOrder);
+                    await _context.SaveChangesAsync();
+
+                    //Step 2: insert all order details by var "myDetailsInCart"
+                    foreach (var item in myDetailsInCart)
+                    {
+                        OrderDetail detail = new OrderDetail()
+                        {
+                            OrderId = myOrder.Id,
+                            BookIsbn = item.BookIsbn,
+                            Quantity = 1
+                        };
+                        _context.Add(detail);
+                    }
+                    await _context.SaveChangesAsync();
+
+                    //Step 3: empty/delete the cart we just done for thisUser
+                    _context.Carts.RemoveRange(myDetailsInCart);
+                    await _context.SaveChangesAsync();
+                    transaction.Commit();
+                }
+                catch (DbUpdateException ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine("Error occurred in Checkout" + ex);
+                }
+            }
+
+            return RedirectToAction("Index", "Cart");
         }
 
         private bool CartExists(string id)
