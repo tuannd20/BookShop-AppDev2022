@@ -84,7 +84,8 @@ namespace BookShop.Controllers
             var userid = _userManager.GetUserId(HttpContext.User);
             var bookShopContext = _context.Orders.Include(o => o.User).Where(u => u.UserId == userid);
             return View("Views/Home/Profile.cshtml", await bookShopContext.ToListAsync());
-        }
+        } 
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

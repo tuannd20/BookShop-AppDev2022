@@ -1,11 +1,17 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BookShop.Data;
 using BookShop.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("BookShopContextConnection");;
+var connectionString = builder.Configuration.GetConnectionString("BookShopContextConnection");
+builder.Services.AddDbContext<BookShopContext>(options =>
+    options.UseSqlServer(connectionString));;
 
+/*builder.Services.AddDefaultIdentity<BookShopUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<BookShopContext>();;
+;
+*/
 builder.Services.AddDbContext<BookShopContext>(options =>
     options.UseSqlServer(connectionString));;
 
