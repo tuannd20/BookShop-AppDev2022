@@ -23,9 +23,9 @@ namespace BookShop.Controllers
 
         private readonly int maxofpage = 10;
 
-        private readonly int rowsonepage = 4;
+        private readonly int rowsonepage = 12;
 
-        /* public HomeController(ILogger<HomeController> logger)
+        /* public HomeController(ILogger<HomeContrller> logger)
          {
              _logger = logger;
          }*/

@@ -125,13 +125,13 @@ namespace BookShop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> AddToCart(int? quantity , string isbn)
+        public async Task<IActionResult> AddToCart(int? quantity, string isbn)
         {
             try
             {
 
                 var thisUserId = _userManager.GetUserId(HttpContext.User);
-                if(thisUserId == null)
+                if (thisUserId == null)
                 {
                     return RedirectToAction("Login", "Identity");
                 }
@@ -166,7 +166,7 @@ namespace BookShop.Controllers
                 TempData["msg"] = "<script>alert('You are seller. Can't get in here.');</script>";
                 return RedirectToAction("SearchBook", "Book");
             }
-          
+
         }
 
         public async Task<IActionResult> Checkout()
@@ -184,8 +184,15 @@ namespace BookShop.Controllers
                     Order myOrder = new Order();
                     myOrder.UserId = thisUserId;
                     myOrder.OrderDate = DateTime.Now;
-                    myOrder.Total = myDetailsInCart.Select(c => c.Book.Price)
-                        .Aggregate((c1, c2) => c1 + c2);
+                    var Total = 0;
+
+                    for (int i = 0; i < myDetailsInCart.Count; i++)
+                    {
+                        Total +=  Total + (myDetailsInCart[i].Book.Price *(int) myDetailsInCart[i].Quantity);
+
+                    }
+
+                    myOrder.Total = Total;
                     _context.Add(myOrder);
                     await _context.SaveChangesAsync();
 
@@ -196,7 +203,7 @@ namespace BookShop.Controllers
                         {
                             OrderId = myOrder.Id,
                             BookIsbn = item.BookIsbn,
-                            Quantity = 1
+                            Quantity = item.Quantity
                         };
                         _context.Add(detail);
                     }

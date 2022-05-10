@@ -24,7 +24,7 @@ namespace BookShop.Controllers
 
         private readonly int maxofpage = 10;
 
-        private readonly int rowsonepage = 4;
+        private readonly int rowsonepage = 12;
 
         public BookController(BookShopContext context, UserManager<BookShopUser> userManager)
         {
@@ -81,6 +81,8 @@ namespace BookShop.Controllers
                 */
             }
             int numOfFilteredBook = books.Count();
+            Console.WriteLine("Tota",numOfFilteredBook);
+            ViewBag.TotalBook = numOfFilteredBook;
             ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredBook / rowsonepage);
             ViewBag.CurrentPage = id;
             List<Book> booklist = await books.Skip(id * rowsonepage)
@@ -92,6 +94,7 @@ namespace BookShop.Controllers
             ViewBag.idpagenext = id + 1;
             ViewBag.currentPage = id;
             return View("Views/Book/Search.cshtml", booklist);
+
         }
 
         public async Task<IActionResult> DisplayBook(string Isbn)

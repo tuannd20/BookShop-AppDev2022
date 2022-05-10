@@ -100,9 +100,11 @@
 
     <h1 class="heading"> <span>new arrivals</span> </h1>
 
-    <div class="swiper-wrapper-arrivals text-dark">
-        @foreach (var book in Model)
+    <div style="display: flex; flex-direction: column!important;">
+         @foreach (var book in Model)
         {
+    <div class="wiper-wrapper-arrivalss text-dark">
+        
             <a asp-controller="Book" asp-action="DisplayBook" asp-route-isbn = "@book.Isbn">
                 <div class="swiper-slide-arrivals"
                  data-title="@book.Title"
@@ -127,7 +129,9 @@
                     </div>
                 </div>
             </a>
-        }
+        
+    </div>
+    }
     </div>
 
 @if (ViewBag.NumberOfPages > 0)
