@@ -2,9 +2,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BookShop.Data;
 using BookShop.Areas.Identity.Data;
+using BookShop.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("BookShopContextConnection");
+
+
 builder.Services.AddDbContext<BookShopContext>(options =>
     options.UseSqlServer(connectionString));;
 
@@ -47,6 +51,19 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+var config = builder.Configuration;
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<EmailSenderOptions>(options =>
+{
+    options.Host = config["MailSettings:Host"];
+    options.Port = int.Parse(config["MailSettings:Port"]);
+    options.User = config["MailSettings:User"];
+    options.Pass = config["MailSettings:Pass"];
+    options.Name = config["MailSettings:Name"];
+    options.Sender = config["MailSettings:User"];
+});
+
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())

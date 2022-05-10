@@ -33,8 +33,9 @@ namespace BookShop.Controllers
 
             var orderDetail = from b in _context.OrderDetails select b;
 
-            orderDetail = orderDetail.Include(u => u.Order).Include(b => b.Book)
+            orderDetail = orderDetail.Include(u => u.Order).Include(b => b.Book).ThenInclude(s => s.Store)
                 .Where(f => f.OrderId == id);
+                /*.Where(v => v.Order.UserId == userid);*/
            /* List<Order> ordersList = await ordered.Skip(id * _recordsPerPage)
                 .Take(_recordsPerPage).ToListAsync();*/
 

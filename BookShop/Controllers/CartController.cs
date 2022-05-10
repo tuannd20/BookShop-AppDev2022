@@ -84,58 +84,34 @@ namespace BookShop.Controllers
         }
 
         // GET: Cart/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string uid, string bid)
         {
-            if (id == null)
+            if (bid == null || uid == null)
             {
                 return NotFound();
             }
 
-            var cart = await _context.Carts.FindAsync(id);
-            if (cart == null)
-            {
-                return NotFound();
-            }
-            ViewData["BookIsbn"] = new SelectList(_context.Books, "Isbn", "Isbn", cart.BookIsbn);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", cart.UserId);
+            var cart = await _context.Carts.FirstOrDefaultAsync(m => m.UserId == uid && m.BookIsbn == bid);
             return View(cart);
         }
 
         // POST: Cart/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("UserId,BookIsbn")] Cart cart)
+        public async Task<IActionResult> Edit([Bind("UserId,BookIsbn,Quantity")] Cart cart, int quantity)
         {
-            if (id != cart.UserId)
+            try
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(cart);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CartExists(cart.UserId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Carts.Update(cart);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookIsbn"] = new SelectList(_context.Books, "Isbn", "Isbn", cart.BookIsbn);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", cart.UserId);
-            return View(cart);
+            catch (DbUpdateConcurrencyException)
+            {
+                return RedirectToAction("Edit", new { uid = cart.UserId, bid = cart.BookIsbn });
+            }
         }
 
         public async Task<IActionResult> Remove(string cartId)

@@ -1,16 +1,15 @@
-﻿@model IEnumerable<BookShop.Models.OrderDetail>
+﻿@model IEnumerable<BookShop.Models.Cart>
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_LayoutSeller.cshtml";     
-
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
 }
-@*
+
 <h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
-</p>*@
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -18,14 +17,11 @@
                 @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Order)
+                @Html.DisplayNameFor(model => model.User)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Book)
             </th>
-           @* <th>
-                @Html.DisplayNameFor(model => model.Order.)
-            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -36,19 +32,16 @@
                 @Html.DisplayFor(modelItem => item.Quantity)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Order.Id)
+                @Html.DisplayFor(modelItem => item.User.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Book.Title)
+                @Html.DisplayFor(modelItem => item.Book.Isbn)
             </td>
             <td>
-             @*   @Html.DisplayFor(modelItem => item.Order.User.Address)
-            </td>*@
-            @*<td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                 <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right" asp-action="Edit" asp-route-uid="@item.UserId" asp-route-bid="@item.BookIsbn"> Edit</a>
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>*@
+            </td>
         </tr>
 }
     </tbody>
