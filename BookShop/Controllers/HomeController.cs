@@ -23,9 +23,9 @@ namespace BookShop.Controllers
 
         private readonly int maxofpage = 10;
 
-        private readonly int rowsonepage = 4;
+        private readonly int rowsonepage = 12;
 
-        /* public HomeController(ILogger<HomeController> logger)
+        /* public HomeController(ILogger<HomeContrller> logger)
          {
              _logger = logger;
          }*/
@@ -84,7 +84,8 @@ namespace BookShop.Controllers
             var userid = _userManager.GetUserId(HttpContext.User);
             var bookShopContext = _context.Orders.Include(o => o.User).Where(u => u.UserId == userid);
             return View("Views/Home/Profile.cshtml", await bookShopContext.ToListAsync());
-        }
+        } 
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -52,7 +52,7 @@
 			}
 			else
 			{
-				<div class="tab-item">
+				<div class="tab-item d-none">
 					<i class="tab-icon fa-solid fa-book"></i>
 					Record Ordered
 				</div>
@@ -72,7 +72,8 @@
 		<div class="tab-content">
 			<div class="tab-pane active">
 				<div class="d-flex align-items-center justify-content-center">
-					<form class="row g-3 fs-3">
+					<a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-primary p-2 fs-3">Update Profile</a>
+					@*<form asp-controller="" asp-action="" method="" class="row g-3 fs-3">
 						<div class="col-md-6 fs-3">
 							<label for="inputEmail4" class="form-label">Email</label>
 							<input type="email" class="form-control p-3 fs-3" id="inputEmail4" value="@UserManager.GetUserName(User)" readonly>
@@ -86,10 +87,10 @@
 							<input type="text" class="form-control p-3 fs-3" id="inputAddress" placeholder="1234 Main St">
 						</div>
 						<div class="col-12 fs-3">
-							<a type="submit" class="btn btn-primary p-2 fs-3">Save</a>
+							<input type="submit" class="btn btn-primary p-2 fs-3"/>
 							<a type="submit" class="btn btn-primary p-2 fs-3">Cancel</a>
 						</div>
-					</form>
+					</form>*@
 				</div>
 			</div>
 			@if (User.IsInRole("Customer"))
@@ -131,7 +132,7 @@
 				</div>
 			</div>
 			} else {
-			<div class="tab-pane">
+			<div class="tab-pane d-none">
 				<h2>Seller</h2>
 						<table class="table table-hover fs-3 aligns-items-center justify-content-center">
 							<thead>

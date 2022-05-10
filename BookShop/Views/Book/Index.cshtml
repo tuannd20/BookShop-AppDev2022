@@ -65,26 +65,38 @@
     </tbody>
 </table>
 
-<nav aria-label="...">
-    <ul class="pagination justify-content-center">
-        <li class="page-item">
-            <a class="page-link" href="/Students/Index/@ViewBag.idpagprev" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        @for (var i = 0; i < ViewBag.NumberOfPages; i++)
-        {
-            var style = (ViewBag.currentPage == @i) ? "active" : "";
-            <li class="page-item @style " aria-current="page">
-                <a asp-action="Index" asp-route-id="@(i)" asp-route-SearchString="@ViewData["CurrentFilter"]" class="page-link">@(i +1 ) </a>
+@if (ViewBag.NumberOfPages > 0)
+{
+    <nav aria-label="...">
+        <ul class="pagination justify-content-center">
+            @if (ViewBag.CurrentPage == 1)
+            {
+                <li class="page-item disabled">
+                    <a class="page-link" href="/Book/Index/@ViewBag.idpagprev" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
             </li>
+            } else{
+                <li class="page-item ">
+                    <a class="page-link" href="/Book/Index/@ViewBag.idpagprev" aria-label="Previous">
+                    First
+                </a>
+                </li>
+            }
+            @for (var i = 0; i < ViewBag.NumberOfPages; i++)
+            {
+                var style = (ViewBag.currentPage == @i) ? "active" : "";
+                <li class="page-item @style " aria-current="page">
+                    <a asp-action="Index" asp-route-id="@(i)" asp-route-SearchString="@ViewData["CurrentFilter"]" class="page-link">@(i +1 ) </a>
+                </li>
 
-        }
+            }
 
-        <li class="page-item">
-            <a class="page-link" href="/Students/Index/@ViewBag.idpagenext" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+            <li class="page-item">
+                <a class="page-link" href="/Students/Index/@ViewBag.idpagenext" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

@@ -84,58 +84,34 @@ namespace BookShop.Controllers
         }
 
         // GET: Cart/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string uid, string bid)
         {
-            if (id == null)
+            if (bid == null || uid == null)
             {
                 return NotFound();
             }
 
-            var cart = await _context.Carts.FindAsync(id);
-            if (cart == null)
-            {
-                return NotFound();
-            }
-            ViewData["BookIsbn"] = new SelectList(_context.Books, "Isbn", "Isbn", cart.BookIsbn);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", cart.UserId);
+            var cart = await _context.Carts.FirstOrDefaultAsync(m => m.UserId == uid && m.BookIsbn == bid);
             return View(cart);
         }
 
         // POST: Cart/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("UserId,BookIsbn")] Cart cart)
+        public async Task<IActionResult> Edit([Bind("UserId,BookIsbn,Quantity")] Cart cart, int quantity)
         {
-            if (id != cart.UserId)
+            try
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(cart);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CartExists(cart.UserId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Carts.Update(cart);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookIsbn"] = new SelectList(_context.Books, "Isbn", "Isbn", cart.BookIsbn);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", cart.UserId);
-            return View(cart);
+            catch (DbUpdateConcurrencyException)
+            {
+                return RedirectToAction("Edit", new { uid = cart.UserId, bid = cart.BookIsbn });
+            }
         }
 
         public async Task<IActionResult> Remove(string cartId)
@@ -149,13 +125,13 @@ namespace BookShop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> AddToCart(int? quantity , string isbn)
+        public async Task<IActionResult> AddToCart(int? quantity, string isbn)
         {
             try
             {
 
                 var thisUserId = _userManager.GetUserId(HttpContext.User);
-                if(thisUserId == null)
+                if (thisUserId == null)
                 {
                     return RedirectToAction("Login", "Identity");
                 }
@@ -190,7 +166,7 @@ namespace BookShop.Controllers
                 TempData["msg"] = "<script>alert('You are seller. Can't get in here.');</script>";
                 return RedirectToAction("SearchBook", "Book");
             }
-          
+
         }
 
         public async Task<IActionResult> Checkout()
@@ -208,8 +184,15 @@ namespace BookShop.Controllers
                     Order myOrder = new Order();
                     myOrder.UserId = thisUserId;
                     myOrder.OrderDate = DateTime.Now;
-                    myOrder.Total = myDetailsInCart.Select(c => c.Book.Price)
-                        .Aggregate((c1, c2) => c1 + c2);
+                    var Total = 0;
+
+                    for (int i = 0; i < myDetailsInCart.Count; i++)
+                    {
+                        Total +=  Total + (myDetailsInCart[i].Book.Price *(int) myDetailsInCart[i].Quantity);
+
+                    }
+
+                    myOrder.Total = Total;
                     _context.Add(myOrder);
                     await _context.SaveChangesAsync();
 
@@ -220,7 +203,7 @@ namespace BookShop.Controllers
                         {
                             OrderId = myOrder.Id,
                             BookIsbn = item.BookIsbn,
-                            Quantity = 1
+                            Quantity = item.Quantity
                         };
                         _context.Add(detail);
                     }
