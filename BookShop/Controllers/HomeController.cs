@@ -12,23 +12,12 @@ namespace BookShop.Controllers
 {
     public class HomeController : Controller
     {
-        /*        private readonly ILogger<HomeController> _logger;
-        */
         private BookShopContext _context;
-
         private readonly ILogger<HomeController> _logger;
         private readonly IEmailSender _emailSender;
         private readonly UserManager<BookShopUser> _userManager;
-
-
         private readonly int maxofpage = 10;
-
-        private readonly int rowsonepage = 12;
-
-        /* public HomeController(ILogger<HomeContrller> logger)
-         {
-             _logger = logger;
-         }*/
+        private readonly int rowsonepage = 4;
         public HomeController(BookShopContext context, ILogger<HomeController> logger, IEmailSender emailSender, UserManager<BookShopUser> userManager)
         {
             _context = context;
@@ -39,13 +28,10 @@ namespace BookShop.Controllers
         public async Task<IActionResult> Index(int id = 0, string searchString = "")
         {
             ViewData["CurrentFilter"] = searchString;
-            var books = from s in _context.Books
-                        select s;
+            var books = from s in _context.Books select s;
             if (searchString != null)
             {
                 books = books.Where(s => s.Title.Contains(searchString) || s.Category.Contains(searchString));
-                /*            students = students.Where(s => s.LastName);
-                */
             }
             int numOfFilteredBook = books.Count();
             ViewBag.NumberOfPages = (int)Math.Ceiling((double)numOfFilteredBook / rowsonepage);
@@ -58,35 +44,15 @@ namespace BookShop.Controllers
             }
             ViewBag.idpagenext = id + 1;
             ViewBag.currentPage = id;
-            return View(booklist);
-           
+            return View(booklist);           
         }
 
-        [Authorize(Roles = "Seller")]
-        public IActionResult ForSellerOnly()
-        {
-
-            /* ViewBag.message = "This is for Customer only! Hi " + _userManager.GetUserName(HttpContext.User);*/
-            return View("Views/Store/Index.cshtml");
-        }
-
-        public IActionResult Search()
-        {
-            return View("Views/Home/Search.cshtml");
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
          public async Task<IActionResult> Profile()
         {
             var userid = _userManager.GetUserId(HttpContext.User);
             var bookShopContext = _context.Orders.Include(o => o.User).Where(u => u.UserId == userid);
             return View("Views/Home/Profile.cshtml", await bookShopContext.ToListAsync());
-        } 
-        
-
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

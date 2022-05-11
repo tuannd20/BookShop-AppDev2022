@@ -100,10 +100,10 @@
 
     <h1 class="heading"> <span>new arrivals</span> </h1>
 
-    <div style="display: flex; flex-direction: column!important;">
+    <div style="display: flex; flex-direction: row !important;">
          @foreach (var book in Model)
         {
-    <div class="wiper-wrapper-arrivalss text-dark">
+    <div class="wiper-wrapper-arrivalss text-dark" style = "width:24%">
         
             <a asp-controller="Book" asp-action="DisplayBook" asp-route-isbn = "@book.Isbn">
                 <div class="swiper-slide-arrivals"
@@ -114,7 +114,7 @@
                  data-url="@book.ImgUrl"
                  data-isbn="@book.Isbn">
                     <div class="image">
-                        <img src="~/img/@book.ImgUrl" alt="">
+                        <img src="~/img/@book.ImgUrl" style ="width:280px" alt="">
                     </div>
                     <div class="content">
                         <h3>@book.Title</h3>
