@@ -203,7 +203,7 @@ namespace BookShop.Controllers
                         {
                             OrderId = myOrder.Id,
                             BookIsbn = item.BookIsbn,
-                            Quantity = item.Quantity
+                            Quantity =(int) item.Quantity
                         };
                         _context.Add(detail);
                     }

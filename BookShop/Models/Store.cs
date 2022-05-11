@@ -14,9 +14,7 @@ namespace BookShop.Models
         public string Address { get; set; }
         public string Slogan { get; set; }
         [ValidateNever]
-
         public BookShopUser User { get; set; }
         public virtual ICollection<Book>? Books { get; set; }
-
     }
 }
